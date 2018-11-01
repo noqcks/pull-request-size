@@ -46,5 +46,5 @@ module.exports = app => {
   // listen to marketplace events
   app.on('marketplace_purchase', async context => {
     return
-  }
+  })
 }

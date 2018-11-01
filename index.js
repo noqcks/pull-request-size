@@ -32,6 +32,7 @@ function size (lineCount) {
 }
 
 module.exports = app => {
+  // listen to all relevant pull request event actions
   app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.synchronized', 'pull_request.edited'], async context => {
     var pullRequest = context.payload.pull_request
 
@@ -41,4 +42,9 @@ module.exports = app => {
       labels: [ghLabel]
     }))
   })
+
+  // listen to marketplace events
+  app.on('marketplace_purchase', async context => {
+    return
+  }
 }

@@ -1,4 +1,4 @@
-# size
+# Pull Request Size
 
 > A GitHub App that applies 'size/\*' labels to Pull Requests based on the total number of lines of changes (additions and deletions).
 

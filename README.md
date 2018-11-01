@@ -28,4 +28,4 @@ npm start
 
 ## License
 
-[ISC](LICENSE) © 2018 Benji Visser <benny@noqcks.io>
+[MIT](LICENSE) © 2018 Benji Visser <benny@noqcks.io>

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Applies size labels to Pull Requests",
   "author": "Benji Visser <benny@noqcks.io>",
-  "license": "ISC",
+  "license": "MIT",
   "repository": "https://github.com/noqcks/size.git",
   "homepage": "https://github.com/noqcks/size",
   "bugs": "https://github.com/noqcks/size/issues",

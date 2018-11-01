@@ -1,6 +1,6 @@
 # Pull Request Size
 
-Pull Request Size is a GitHub App that applies 'size/\*' labels to Pull Requests based on the total lines of code changed (additions and deletions).
+Pull Request Size is a GitHub App that applies `size/\*` labels to Pull Requests based on the total lines of code changed (additions and deletions).
 
 
 <img width="767" alt="screen shot 2018-11-01 at 10 42 27 am" src="https://user-images.githubusercontent.com/4740147/47858607-d7e05f80-ddc2-11e8-97d9-247033cc9a12.png">

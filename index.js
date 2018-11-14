@@ -1,3 +1,6 @@
+const Sentry = require('@sentry/node');
+Sentry.init({ dsn: 'https://0036da26698342b088d9150609d63b48@sentry.io/1320034' });
+
 const label = {
   XS: 'size/XS',
   S: 'size/S',

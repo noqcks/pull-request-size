@@ -1,4 +1,6 @@
 # Pull Request Size
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnoqcks%2Fsize.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnoqcks%2Fsize?ref=badge_shield)
+
 
 Pull Request Size is a GitHub App that applies `size/*` labels to Pull Requests based on the total lines of code changed (additions and deletions).
 
@@ -29,3 +31,6 @@ npm start
 ## License
 
 [MIT](LICENSE) © 2018 Benji Visser <benny@noqcks.io>
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnoqcks%2Fsize.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnoqcks%2Fsize?ref=badge_large)

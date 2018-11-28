@@ -29,3 +29,8 @@ npm start
 ## License
 
 [MIT](LICENSE) © 2018 Benji Visser <benny@noqcks.io>
+
+## TODO
+
+- remove all size labels before adding them (in the case that a PR is re-opened of a smaller or larger size)
+- read .gitattributes file for ignored files

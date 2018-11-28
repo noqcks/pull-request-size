@@ -1,5 +1,6 @@
 const Sentry = require('@sentry/node');
-Sentry.init({ dsn: 'https://0036da26698342b088d9150609d63b48@sentry.io/1320034' });
+Sentry.init({ dsn: process.env.SENTRY_DSN });
+const generated = require('@noqcks/generated');
 
 const label = {
   XS: 'size/XS',
@@ -39,14 +40,35 @@ module.exports = app => {
   app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.synchronized', 'pull_request.edited'], async context => {
     var pullRequest = context.payload.pull_request
 
-    var ghLabel = size(pullRequest.additions + pullRequest.deletions)
+    var additions = pullRequest.additions
+    var deletions = pullRequest.deletions
 
+    var owner = pullRequest.base.repo.owner.login
+    var repo = pullRequest.base.repo.name
+    var number = pullRequest.number
+
+    // if files are generated, remove them from the additions/deletions total
+    const res = await context.github.pullRequests.getFiles({owner, repo, number})
+
+    res.data.forEach(function(item) {
+      var g = new generated(item.filename, item.patch)
+      if (g.is_generated()) {
+        additions -= item.additions
+        deletions -= item.deletions
+      }
+    })
+
+    // calculate GitHub label
+    var ghLabel = size(additions + deletions)
+
+    // assign GitHub label
     return context.github.issues.addLabels(context.issue({
       labels: [ghLabel]
     }))
+
   })
 
-  // listen to marketplace events
+  // we don't care about marketplace events
   app.on('marketplace_purchase', async context => {
     return
   })

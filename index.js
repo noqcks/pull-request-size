@@ -38,14 +38,10 @@ function size (lineCount) {
 module.exports = app => {
   // listen to all relevant pull request event actions
   app.on(['pull_request.opened', 'pull_request.reopened', 'pull_request.synchronized', 'pull_request.edited'], async context => {
-    var pullRequest = context.payload.pull_request
-
-    var additions = pullRequest.additions
-    var deletions = pullRequest.deletions
-
-    var owner = pullRequest.base.repo.owner.login
-    var repo = pullRequest.base.repo.name
-    var number = pullRequest.number
+    const pullRequest = context.payload.pull_request;
+    const {owner: {login: owner}, name: repo} = pullRequest.base.repo;
+    const {number} = pullRequest;
+    let {additions, deletions} = pullRequest;
 
     // if files are generated, remove them from the additions/deletions total
     const res = await context.github.pullRequests.getFiles({owner, repo, number})

@@ -2,8 +2,16 @@
 
 Pull Request Size is a GitHub App that applies `size/*` labels to Pull Requests based on the total lines of code changed (additions and deletions).
 
-
 <img width="767" alt="screen shot 2018-11-01 at 10 42 27 am" src="https://user-images.githubusercontent.com/4740147/47858607-d7e05f80-ddc2-11e8-97d9-247033cc9a12.png">
+
+Pull Request Size calculates the size of a PR as
+
+```
+total additions + total deletions - (all generated¹ file additions/deletions)
+```
+
+¹ A generated file is either one of the standard generated files as defined in [noqcks/generated](https://github.com/noqcks/generated/blob/master/lib/generated.js) or defined with `linguist-generated=true` in a `.gitattributes` file. See [Customizing how changed files appear on GitHub](https://help.github.com/articles/customizing-how-changed-files-appear-on-github/) for more information.
+
 
 ## Sizing
 
@@ -34,3 +42,4 @@ npm start
 
 - remove all size labels before adding them (in the case that a PR is re-opened of a smaller or larger size)
 - read .gitattributes file for ignored files
+

@@ -16,7 +16,7 @@ describe('Size', () => {
     // This is an easy way to mock out the GitHub API
     github = {
       pullRequests: {
-        getFiles: jest.fn().mockReturnValue({"data": [{
+        listFiles: jest.fn().mockReturnValue({"data": [{
           filename: 'helpers.js',
           patch: '<fake data>',
           additions: 3,
@@ -46,7 +46,7 @@ describe('Size', () => {
 
     // This test passes if the code in your index.js file calls
     // `context.github.issues.addLabels`
-    expect(github.pullRequests.getFiles).toHaveBeenCalled()
+    expect(github.pullRequests.listFiles).toHaveBeenCalled()
     expect(github.issues.addLabels).toHaveBeenCalled()
   })
   test('creates a label when a pull request is edited', async () => {
@@ -58,7 +58,7 @@ describe('Size', () => {
 
     // This test passes if the code in your index.js file calls
     // `context.github.issues.addLabels`
-    expect(github.pullRequests.getFiles).toHaveBeenCalled()
+    expect(github.pullRequests.listFiles).toHaveBeenCalled()
     expect(github.issues.addLabels).toHaveBeenCalled()
   })
   test('creates a label when a pull request is synchronized', async () => {
@@ -70,7 +70,7 @@ describe('Size', () => {
 
     // This test passes if the code in your index.js file calls
     // `context.github.issues.addLabels`
-    expect(github.pullRequests.getFiles).toHaveBeenCalled()
+    expect(github.pullRequests.listFiles).toHaveBeenCalled()
     expect(github.issues.addLabels).toHaveBeenCalled()
   })
 })

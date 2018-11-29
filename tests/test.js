@@ -15,6 +15,20 @@ describe('Size', () => {
     plugin(app)
     // This is an easy way to mock out the GitHub API
     github = {
+      pullRequests: {
+        listFiles: jest.fn().mockReturnValue({"data": [{
+          filename: 'helpers.js',
+          patch: '<fake data>',
+          additions: 3,
+          deletions: 1,
+        },
+        {
+          filename: 'package-lock.json',
+          additions: 45,
+          deletions: 0,
+          patch:'<fake data>' }
+        ]})
+      },
       issues: {
         addLabels: jest.fn().mockReturnValue(Promise.resolve({}))
       }
@@ -32,9 +46,10 @@ describe('Size', () => {
 
     // This test passes if the code in your index.js file calls
     // `context.github.issues.addLabels`
+    expect(github.pullRequests.listFiles).toHaveBeenCalled()
     expect(github.issues.addLabels).toHaveBeenCalled()
   })
- test('creates a label when a pull request is edited', async () => {
+  test('creates a label when a pull request is edited', async () => {
     // Simulates delivery of an issues.opened webhook
     await app.receive({
       name: 'pull_request.edited',
@@ -43,6 +58,7 @@ describe('Size', () => {
 
     // This test passes if the code in your index.js file calls
     // `context.github.issues.addLabels`
+    expect(github.pullRequests.listFiles).toHaveBeenCalled()
     expect(github.issues.addLabels).toHaveBeenCalled()
   })
   test('creates a label when a pull request is synchronized', async () => {
@@ -54,6 +70,7 @@ describe('Size', () => {
 
     // This test passes if the code in your index.js file calls
     // `context.github.issues.addLabels`
+    expect(github.pullRequests.listFiles).toHaveBeenCalled()
     expect(github.issues.addLabels).toHaveBeenCalled()
   })
 })

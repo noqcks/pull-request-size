@@ -6,14 +6,7 @@ Pull Request Size is a GitHub App that applies `size/*` labels to Pull Requests 
 
 <img width="767" alt="screen shot 2018-11-01 at 10 42 27 am" src="https://user-images.githubusercontent.com/4740147/47858607-d7e05f80-ddc2-11e8-97d9-247033cc9a12.png">
 
-Pull Request Size calculates the size of a PR as
-
-```
-total additions + total deletions - (all generated¹ file additions/deletions)
-```
-
-¹ A generated file is either one of the standard generated files as defined in [noqcks/generated](https://github.com/noqcks/generated/blob/master/lib/generated.js) or defined with `linguist-generated=true` in a `.gitattributes` file. See [Customizing how changed files appear on GitHub](https://help.github.com/articles/customizing-how-changed-files-appear-on-github/) for more information.
-
+Configure Pull Request Size for your organization on the [GitHub app page](https://github.com/apps/pull-request-size).
 
 ## Sizing
 
@@ -25,6 +18,14 @@ total additions + total deletions - (all generated¹ file additions/deletions)
 | <a id="size/L" href="#size/L">`size/L`</a> | Denotes a PR that changes 100-499 lines. |
 | <a id="size/XL" href="#size/XL">`size/XL`</a> | Denotes a PR that changes 500-999 lines. |
 | <a id="size/XXL" href="#size/XXL">`size/XXL`</a> | Denotes a PR that changes 1000+ lines. |
+
+Pull Request Size calculates the size of a PR as
+
+```
+total additions + total deletions - (all generated¹ file additions/deletions)
+```
+
+¹ A generated file is either one of the standard generated files as defined in [noqcks/generated](https://github.com/noqcks/generated/blob/master/lib/generated.js) or defined with `linguist-generated=true` in a `.gitattributes` file. See [Customizing how changed files appear on GitHub](https://help.github.com/articles/customizing-how-changed-files-appear-on-github/) for more information.
 
 ## Setup
 

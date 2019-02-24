@@ -12,6 +12,15 @@ const label = {
   XXL: 'size/XXL'
 }
 
+const colors = {
+  'size/XS': '3CBF00',
+  'size/S': '5D9801',
+  'size/M': '7F7203',
+  'size/L': 'A14C05',
+  'size/XL': 'C32607',
+  'size/XXL': 'E50009'
+}
+
 const sizes = {
   S: 10,
   M: 30,
@@ -90,6 +99,28 @@ function globMatch (file, globs) {
   return false
 }
 
+async function addLabel (context, name, color) {
+  const params = Object.assign({}, context.issue(), {labels: [name]})
+
+  await ensureLabelExists(context, name, color)
+  await context.github.issues.addLabels(params)
+}
+
+async function ensureLabelExists (context, name, color) {
+  try {
+    return await context.github.issues.getLabel(context.repo({
+      name: name
+    }))
+  } catch (e) {
+    return context.github.issues.createLabel(context.repo({
+      name: name,
+      color: color
+    }))
+  }
+}
+
+
+
 /**
  * This is the main event loop that runs when a revelent Pull Request
  * action is triggered.
@@ -136,10 +167,7 @@ module.exports = app => {
     })
 
     // assign GitHub label
-    return context.github.issues.addLabels(context.issue({
-      labels: [labelToAdd]
-    }))
-
+    return await addLabel(context, labelToAdd, colors[labelToAdd])
   })
 
   // we don't care about marketplace events

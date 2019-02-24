@@ -33,7 +33,8 @@ describe('Size', () => {
       },
       issues: {
         addLabels: jest.fn().mockReturnValue(Promise.resolve({})),
-        removeLabel: jest.fn().mockReturnValue(Promise.resolve({}))
+        removeLabel: jest.fn().mockReturnValue(Promise.resolve({})),
+        createLabel: jest.fn().mockReturnValue(Promise.resolve({}))
       }
     }
     // Passes the mocked out GitHub API into out app instance

@@ -12,6 +12,24 @@
     "state": "open",
     "locked": false,
     "title": "Update README.md",
+    "labels":[
+      {
+        "id": 1142304412,
+        "node_id": "MDU6TGFiZWwxMTQyMzA0NDEy",
+        "url": "https://api.github.com/repos/noqcks/the-example-app.nodejs/labels/size/M",
+        "name": "size/M",
+        "color": "ededed",
+        "default": false
+      },
+      {
+        "id": 1143306270,
+        "node_id": "MDU6TGFiZWwxMTQzMzA2Mjcw",
+        "url": "https://api.github.com/repos/noqcks/the-example-app.nodejs/labels/size/XS",
+        "name": "size/XS",
+        "color": "ededed",
+        "default": false
+      }
+    ],
     "user": {
       "login": "watsonbot",
       "id": 30050890,

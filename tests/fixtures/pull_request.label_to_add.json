@@ -1,5 +1,5 @@
 {
-  "action": "opened",
+  "action": "edited",
   "number": 16,
   "pull_request": {
     "url": "https://api.github.com/repos/sotayamashita/labeling-droid/pulls/16",
@@ -17,7 +17,7 @@
         "id": 1142304412,
         "node_id": "MDU6TGFiZWwxMTQyMzA0NDEy",
         "url": "https://api.github.com/repos/noqcks/the-example-app.nodejs/labels/size/M",
-        "name": "size/M",
+        "name": "size/XL",
         "color": "ededed",
         "default": false
       },
@@ -25,7 +25,7 @@
         "id": 1143306270,
         "node_id": "MDU6TGFiZWwxMTQzMzA2Mjcw",
         "url": "https://api.github.com/repos/noqcks/the-example-app.nodejs/labels/size/XS",
-        "name": "size/XS",
+        "name": "size/S",
         "color": "ededed",
         "default": false
       }
@@ -49,12 +49,12 @@
       "type": "User",
       "site_admin": false
     },
-    "body": "",
+    "body": "edit  ",
     "created_at": "2018-01-07T06:21:55Z",
-    "updated_at": "2018-01-07T06:21:55Z",
+    "updated_at": "2018-01-07T06:23:08Z",
     "closed_at": null,
     "merged_at": null,
-    "merge_commit_sha": null,
+    "merge_commit_sha": "f39f47449eb7a3aaf998f1eb144b1b51134dcc25",
     "assignee": null,
     "assignees": [
 
@@ -272,7 +272,7 @@
         "deployments_url": "https://api.github.com/repos/sotayamashita/labeling-droid/deployments",
         "created_at": "2017-11-18T07:15:15Z",
         "updated_at": "2018-01-04T07:45:12Z",
-        "pushed_at": "2018-01-06T06:32:38Z",
+        "pushed_at": "2018-01-07T06:21:56Z",
         "git_url": "git://github.com/sotayamashita/labeling-droid.git",
         "ssh_url": "git@github.com:sotayamashita/labeling-droid.git",
         "clone_url": "https://github.com/sotayamashita/labeling-droid.git",
@@ -331,17 +331,22 @@
     },
     "author_association": "NONE",
     "merged": false,
-    "mergeable": null,
-    "rebaseable": null,
-    "mergeable_state": "unknown",
+    "mergeable": true,
+    "rebaseable": true,
+    "mergeable_state": "unstable",
     "merged_by": null,
     "comments": 0,
     "review_comments": 0,
     "maintainer_can_modify": true,
     "commits": 1,
-    "additions": 30,
-    "deletions": 100,
+    "additions": 100,
+    "deletions": 900,
     "changed_files": 1
+  },
+  "changes": {
+    "body": {
+      "from": ""
+    }
   },
   "repository": {
     "id": 111185105,
@@ -409,7 +414,7 @@
     "deployments_url": "https://api.github.com/repos/sotayamashita/labeling-droid/deployments",
     "created_at": "2017-11-18T07:15:15Z",
     "updated_at": "2018-01-04T07:45:12Z",
-    "pushed_at": "2018-01-06T06:32:38Z",
+    "pushed_at": "2018-01-07T06:21:56Z",
     "git_url": "git://github.com/sotayamashita/labeling-droid.git",
     "ssh_url": "git@github.com:sotayamashita/labeling-droid.git",
     "clone_url": "https://github.com/sotayamashita/labeling-droid.git",
@@ -440,21 +445,21 @@
     "default_branch": "master"
   },
   "sender": {
-    "login": "watsonbot",
-    "id": 30050890,
-    "avatar_url": "https://avatars0.githubusercontent.com/u/30050890?v=4",
+    "login": "sotayamashita",
+    "id": 1587053,
+    "avatar_url": "https://avatars1.githubusercontent.com/u/1587053?v=4",
     "gravatar_id": "",
-    "url": "https://api.github.com/users/watsonbot",
-    "html_url": "https://github.com/watsonbot",
-    "followers_url": "https://api.github.com/users/watsonbot/followers",
-    "following_url": "https://api.github.com/users/watsonbot/following{/other_user}",
-    "gists_url": "https://api.github.com/users/watsonbot/gists{/gist_id}",
-    "starred_url": "https://api.github.com/users/watsonbot/starred{/owner}{/repo}",
-    "subscriptions_url": "https://api.github.com/users/watsonbot/subscriptions",
-    "organizations_url": "https://api.github.com/users/watsonbot/orgs",
-    "repos_url": "https://api.github.com/users/watsonbot/repos",
-    "events_url": "https://api.github.com/users/watsonbot/events{/privacy}",
-    "received_events_url": "https://api.github.com/users/watsonbot/received_events",
+    "url": "https://api.github.com/users/sotayamashita",
+    "html_url": "https://github.com/sotayamashita",
+    "followers_url": "https://api.github.com/users/sotayamashita/followers",
+    "following_url": "https://api.github.com/users/sotayamashita/following{/other_user}",
+    "gists_url": "https://api.github.com/users/sotayamashita/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/sotayamashita/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/sotayamashita/subscriptions",
+    "organizations_url": "https://api.github.com/users/sotayamashita/orgs",
+    "repos_url": "https://api.github.com/users/sotayamashita/repos",
+    "events_url": "https://api.github.com/users/sotayamashita/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/sotayamashita/received_events",
     "type": "User",
     "site_admin": false
   },

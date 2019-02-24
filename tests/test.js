@@ -2,6 +2,8 @@ const { Application } = require('probot')
 const expect = require('expect')
 const plugin = require('..')
 
+
+const pullRequestLabelToAdd = require('./fixtures/pull_request.label_to_add.json')
 const pullRequestOpenedPayload = require('./fixtures/pull_request.opened.json')
 const pullRequestEditedPayload = require('./fixtures/pull_request.edited.json')
 const pullRequestSynchronizedPayload = require('./fixtures/pull_request.synchronized.json')
@@ -30,7 +32,8 @@ describe('Size', () => {
         ]})
       },
       issues: {
-        addLabels: jest.fn().mockReturnValue(Promise.resolve({}))
+        addLabels: jest.fn().mockReturnValue(Promise.resolve({})),
+        removeLabel: jest.fn().mockReturnValue(Promise.resolve({}))
       }
     }
     // Passes the mocked out GitHub API into out app instance
@@ -49,6 +52,33 @@ describe('Size', () => {
     expect(github.pullRequests.listFiles).toHaveBeenCalled()
     expect(github.issues.addLabels).toHaveBeenCalled()
   })
+
+  test('remove existing size labels', async () => {
+    // Simulates delivery of an issues.opened webhook
+    await app.receive({
+      name: 'pull_request.edited',
+      payload: pullRequestEditedPayload
+    })
+
+
+    expect(github.pullRequests.listFiles).toHaveBeenCalled()
+    expect(github.issues.removeLabel).toHaveBeenCalledTimes(2)
+    expect(github.issues.addLabels).toHaveBeenCalled()
+  })
+
+  test('doesnt remove size label if it is labelToAdd', async () => {
+    // Simulates delivery of an issues.opened webhook
+    await app.receive({
+      name: 'pull_request.edited',
+      payload: pullRequestLabelToAdd
+    })
+
+    expect(github.pullRequests.listFiles).toHaveBeenCalled()
+    // only called one time even though we have 2 labels
+    expect(github.issues.removeLabel).toHaveBeenCalledTimes(1)
+    expect(github.issues.addLabels).toHaveBeenCalled()
+  })
+
   test('creates a label when a pull request is edited', async () => {
     // Simulates delivery of an issues.opened webhook
     await app.receive({
@@ -61,6 +91,7 @@ describe('Size', () => {
     expect(github.pullRequests.listFiles).toHaveBeenCalled()
     expect(github.issues.addLabels).toHaveBeenCalled()
   })
+
   test('creates a label when a pull request is synchronized', async () => {
     // Simulates delivery of an issues.opened webhook
     await app.receive({

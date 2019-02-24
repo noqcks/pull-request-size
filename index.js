@@ -122,11 +122,22 @@ module.exports = app => {
     })
 
     // calculate GitHub label
-    var ghLabel = sizeLabel(additions + deletions)
+    var labelToAdd = sizeLabel(additions + deletions)
+
+    // remove existing size/<size> label if it exists and is not labelToAdd
+    pullRequest.labels.forEach(function(prLabel) {
+      if(Object.values(label).includes(prLabel.name)) {
+        if (prLabel.name != labelToAdd) {
+          context.github.issues.removeLabel(context.issue({
+            name: prLabel.name
+          }))
+        }
+      }
+    })
 
     // assign GitHub label
     return context.github.issues.addLabels(context.issue({
-      labels: [ghLabel]
+      labels: [labelToAdd]
     }))
 
   })

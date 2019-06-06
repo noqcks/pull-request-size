@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@sentry/node": "^4.3.0",
-    "probot": "^7.3.1",
+    "probot": "^7.5.3",
     "@noqcks/generated": "^1.0.0",
     "minimatch": "^3.0.4"
   },

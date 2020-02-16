@@ -1,5 +1,3 @@
-const Sentry = require('@sentry/node');
-Sentry.init({ dsn: process.env.SENTRY_DSN });
 const generated = require('@noqcks/generated');
 const minimatch = require("minimatch")
 

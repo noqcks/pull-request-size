@@ -1,55 +1,16 @@
 const generated = require('@noqcks/generated');
 const minimatch = require('minimatch');
 
-const label = {
-  XS: 'size/XS',
-  S: 'size/S',
-  M: 'size/M',
-  L: 'size/L',
-  XL: 'size/XL',
-  XXL: 'size/XXL',
-};
-
-const colors = {
-  'size/XS': '3CBF00',
-  'size/S': '5D9801',
-  'size/M': '7F7203',
-  'size/L': 'A14C05',
-  'size/XL': 'C32607',
-  'size/XXL': 'E50009',
-};
-
-const sizes = {
-  S: 10,
-  M: 30,
-  L: 100,
-  Xl: 500,
-  Xxl: 1000,
-};
+const TOO_LARGE_LABEL = 'too-large';
+const labelColor = 'cc1a70';
+const tooLargeBoundary = 500;
 
 /**
- * sizeLabel will return a string label that can be assigned to a
- * GitHub Pull Request. The label is determined by the lines of code
- * in the Pull Request.
+ * tell you if `lineCount` is large than boundary
  *
  * @param lineCount The number of lines in the Pull Request.
  */
-const sizeLabel = (lineCount) => {
-  if (lineCount < sizes.S) {
-    return label.XS
-  } else if (lineCount < sizes.M) {
-    return label.S
-  } else if (lineCount < sizes.L) {
-    return label.M
-  } else if (lineCount < sizes.Xl) {
-    return label.L
-  } else if (lineCount < sizes.Xxl) {
-    return label.XL
-  }
-
-  return label.XXL
-};
-
+const isLargeThanBoundary = (lineCount) => lineCount > tooLargeBoundary;
 
 /**
  * getCustomGeneratedFiles will grab a list of file globs that determine
@@ -155,22 +116,29 @@ module.exports = app => {
       }
     })
 
-    // calculate GitHub label
-    const labelToAdd = sizeLabel(additions + deletions);
+    // check the size
+    const shouldAddLabel = isLargeThanBoundary(additions + deletions);
 
-    // remove existing size/<size> label if it exists and is not labelToAdd
-    pullRequest.labels.forEach((prLabel) => {
-      if(Object.values(label).includes(prLabel.name)) {
-        if (prLabel.name !== labelToAdd) {
-          context.github.issues.removeLabel(context.issue({
-            name: prLabel.name,
-          }));
-        }
+    if (shouldAddLabel === false) {
+      if (pullRequest.labels.includes(TOO_LARGE_LABEL) === true) {
+        context.github.issues.removeLabel(context.issue({
+          name: TOO_LARGE_LABEL,
+        }));
       }
-    });
 
-    // assign GitHub label
-    return await addLabel(context, labelToAdd, colors[labelToAdd]);
+      return;
+    }
+
+    /**
+     * should add the label and it already has
+     */
+    if (pullRequest.labels.includes(TOO_LARGE_LABEL) === true) {
+      return;
+    }
+
+    await addLabel(context, TOO_LARGE_LABEL, labelColor);
+
+    return;
   })
 
   // we don't care about marketplace events

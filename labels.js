@@ -18,6 +18,7 @@ const ensureLabelExists = async (context) => {
 		return context.github.issues.createLabel(context.repo({
 			name: NAME,
 			color: COLOR,
+			description: `This PR is more than ${tooLargeBoundary} lines`,
 		}));
 	}
 };

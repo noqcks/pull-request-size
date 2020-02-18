@@ -1,4 +1,4 @@
-const NAME = 'too-large';
+const NAME = 'large-diff';
 const COLOR = 'cc1a70';
 const tooLargeBoundary = 500;
 

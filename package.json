@@ -1,52 +1,52 @@
 {
-  "name": "size",
-  "version": "1.1.0",
-  "description": "Applies size labels to Pull Requests",
-  "author": "Benji Visser <benny@noqcks.io>",
-  "license": "MIT",
-  "repository": "https://github.com/noqcks/size.git",
-  "homepage": "https://github.com/noqcks/size",
-  "bugs": "https://github.com/noqcks/size/issues",
-  "keywords": [
-    "probot",
-    "github",
-    "probot-app"
-  ],
-  "scripts": {
-    "dev": "nodemon",
-    "start": "probot run ./index.js",
-    "lint": "standard --fix",
-    "test": "jest ",
-    "test:watch": "jest --watch --notify --notifyMode=change --coverage"
-  },
-  "dependencies": {
-    "@noqcks/generated": "^1.0.0",
-    "minimatch": "^3.0.4",
-    "probot": "^7.5.3",
-    "smee-client": "^1.1.0"
-  },
-  "devDependencies": {
-    "jest": "^24.1.0",
-    "nock": "^10.0.0",
-    "nodemon": "^1.18.7",
-    "standard": "^10.0.3"
-  },
-  "engines": {
-    "node": ">= 8.3.0"
-  },
-  "standard": {
-    "env": [
-      "jest"
-    ]
-  },
-  "nodemonConfig": {
-    "exec": "npm start",
-    "watch": [
-      ".env",
-      "."
-    ]
-  },
-  "jest": {
-    "testEnvironment": "node"
-  }
+	"name": "size",
+	"version": "1.1.0",
+	"description": "Applies size labels to Pull Requests",
+	"author": "Benji Visser <benny@noqcks.io>",
+	"license": "MIT",
+	"repository": "https://github.com/noqcks/size.git",
+	"homepage": "https://github.com/noqcks/size",
+	"bugs": "https://github.com/noqcks/size/issues",
+	"keywords": [
+		"probot",
+		"github",
+		"probot-app"
+	],
+	"scripts": {
+		"dev": "nodemon",
+		"start": "probot run ./index.js",
+		"lint": "standard --fix",
+		"test": "jest ",
+		"test:watch": "jest --watch --notify --notifyMode=change --coverage"
+	},
+	"dependencies": {
+		"@noqcks/generated": "^1.0.0",
+		"minimatch": "^3.0.4",
+		"probot": "^7.5.3",
+		"smee-client": "^1.1.0"
+	},
+	"devDependencies": {
+		"jest": "^24.1.0",
+		"nock": "^10.0.0",
+		"nodemon": "^1.18.7",
+		"standard": "^10.0.3"
+	},
+	"engines": {
+		"node": ">= 8.3.0"
+	},
+	"standard": {
+		"env": [
+			"jest"
+		]
+	},
+	"nodemonConfig": {
+		"exec": "npm start",
+		"watch": [
+			".env",
+			"."
+		]
+	},
+	"jest": {
+		"testEnvironment": "node"
+	}
 }

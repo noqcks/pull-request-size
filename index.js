@@ -2,11 +2,11 @@ const generated = require('@noqcks/generated');
 const minimatch = require('minimatch');
 
 const {
-  NAME: LABEL_NAME,
-  COLOR: LABEL_COLOR,
-  isMoreThanBoundary,
-  remove: removeLabel,
-  add: addLabel,
+	NAME: LABEL_NAME,
+	COLOR: LABEL_COLOR,
+	isMoreThanBoundary,
+	remove: removeLabel,
+	add: addLabel,
 } = require('./labels');
 
 /**
@@ -18,28 +18,28 @@ const {
  * @param repo The repository where the .gitattributes file is located.
  */
 const getCustomGeneratedFiles = async (context, owner, repo) => {
-  const path = '.gitattributes';
+	const path = '.gitattributes';
 
-  let response;
-  try {
-    response = await context.github.repos.getContents({owner, repo, path});
-  } catch (e) {
-    return [];
-  }
+	let response;
+	try {
+		response = await context.github.repos.getContents({owner, repo, path});
+	} catch (e) {
+		return [];
+	}
 
-  const buff = new Buffer(response.data.content, 'base64');
-  const lines = buff.toString('ascii').split('\n');
+	const buff = new Buffer(response.data.content, 'base64');
+	const lines = buff.toString('ascii').split('\n');
 
-  return lines.reduce((accumulator, value) => {
-    if (item.includes('linguist-generated=true') === false) {
-      return accumulator;
-    }
+	return lines.reduce((accumulator, value) => {
+		if (item.includes('linguist-generated=true') === false) {
+			return accumulator;
+		}
 
-    return [
-      ...accumulator,
-      value,
-    ];
-  }, []);
+		return [
+			...accumulator,
+			value,
+		];
+	}, []);
 };
 
 /**
@@ -50,13 +50,13 @@ const getCustomGeneratedFiles = async (context, owner, repo) => {
  * @param globs A list of file globs to match the file.
  */
 const globMatch = (file, globs) => {
-  for (let i = 0; i < globs.length; i++) {
-    if (minimatch(file, globs[i])) {
-      return true;
-    }
-  }
+	for (let i = 0; i < globs.length; i++) {
+		if (minimatch(file, globs[i])) {
+			return true;
+		}
+	}
 
-  return false;
+	return false;
 };
 
 /**
@@ -64,56 +64,56 @@ const globMatch = (file, globs) => {
  * action is triggered.
  */
 module.exports = app => {
-  app.on([
-    'pull_request.opened',
-    'pull_request.reopened',
-    'pull_request.synchronized',
-    'pull_request.edited',
-  ], async context => {
-    const pullRequest = context.payload.pull_request;
-    const { owner: { login: owner }, name: repo } = pullRequest.base.repo;
-    const { number } = pullRequest;
-    let { additions, deletions } = pullRequest;
+	app.on([
+		'pull_request.opened',
+		'pull_request.reopened',
+		'pull_request.synchronized',
+		'pull_request.edited',
+	], async context => {
+		const pullRequest = context.payload.pull_request;
+		const { owner: { login: owner }, name: repo } = pullRequest.base.repo;
+		const { number } = pullRequest;
+		let { additions, deletions } = pullRequest;
 
-    // get list of custom generated files as defined in .gitattributes
-    const customGeneratedFiles = await getCustomGeneratedFiles(context, owner, repo);
+		// get list of custom generated files as defined in .gitattributes
+		const customGeneratedFiles = await getCustomGeneratedFiles(context, owner, repo);
 
-    // list of files modified in the pull request
-    const res = await context.github.pullRequests.listFiles({ owner, repo, number });
+		// list of files modified in the pull request
+		const res = await context.github.pullRequests.listFiles({ owner, repo, number });
 
-    // if files are generated, remove them from the additions/deletions total
-    res.data.forEach((item) => {
-      const g = new generated(item.filename, item.patch);
+		// if files are generated, remove them from the additions/deletions total
+		res.data.forEach((item) => {
+			const g = new generated(item.filename, item.patch);
 
-      if (globMatch(item.filename, customGeneratedFiles) || g.isGenerated()) {
-        additions -= item.additions;
-        deletions -= item.deletions;
-      }
-    })
+			if (globMatch(item.filename, customGeneratedFiles) || g.isGenerated()) {
+				additions -= item.additions;
+				deletions -= item.deletions;
+			}
+		})
 
-    // check the size
-    const shouldAddLabel = isMoreThanBoundary(additions + deletions);
+		// check the size
+		const shouldAddLabel = isMoreThanBoundary(additions + deletions);
 
-    if (shouldAddLabel === false) {
-      if (pullRequest.labels.includes(LABEL_NAME) === true) {
-        removeLabel(context);
-      }
+		if (shouldAddLabel === false) {
+			if (pullRequest.labels.includes(LABEL_NAME) === true) {
+				removeLabel(context);
+			}
 
-      return;
-    }
+			return;
+		}
 
-    /**
-     * should add the label and it already has
-     */
-    if (pullRequest.labels.includes(LABEL_NAME) === true) {
-      return;
-    }
+		/**
+		 * should add the label and it already has
+		 */
+		if (pullRequest.labels.includes(LABEL_NAME) === true) {
+			return;
+		}
 
-    await addLabel(context);
+		await addLabel(context);
 
-    return;
-  })
+		return;
+	})
 
-  // we don't care about marketplace events
-  app.on('marketplace_purchase', () => {});
+	// we don't care about marketplace events
+	app.on('marketplace_purchase', () => {});
 };

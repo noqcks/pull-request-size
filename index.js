@@ -1,16 +1,13 @@
 const generated = require('@noqcks/generated');
 const minimatch = require('minimatch');
 
-const TOO_LARGE_LABEL = 'too-large';
-const labelColor = 'cc1a70';
-const tooLargeBoundary = 500;
-
-/**
- * tell you if `lineCount` is large than boundary
- *
- * @param lineCount The number of lines in the Pull Request.
- */
-const isLargeThanBoundary = (lineCount) => lineCount > tooLargeBoundary;
+const {
+  NAME: LABEL_NAME,
+  COLOR: LABEL_COLOR,
+  isMoreThanBoundary,
+  remove: removeLabel,
+  add: addLabel,
+} = require('./labels');
 
 /**
  * getCustomGeneratedFiles will grab a list of file globs that determine
@@ -62,28 +59,6 @@ const globMatch = (file, globs) => {
   return false;
 };
 
-const addLabel = async (context, name, color) => {
-  const params = Object.assign({}, context.issue(), {labels: [name]});
-
-  await ensureLabelExists(context, name, color);
-  await context.github.issues.addLabels(params);
-};
-
-const ensureLabelExists = async (context, name, color) => {
-  try {
-    return await context.github.issues.getLabel(context.repo({
-      name,
-    }));
-  } catch (e) {
-    return context.github.issues.createLabel(context.repo({
-      name: name,
-      color: color,
-    }));
-  }
-};
-
-
-
 /**
  * This is the main event loop that runs when a revelent Pull Request
  * action is triggered.
@@ -117,13 +92,11 @@ module.exports = app => {
     })
 
     // check the size
-    const shouldAddLabel = isLargeThanBoundary(additions + deletions);
+    const shouldAddLabel = isMoreThanBoundary(additions + deletions);
 
     if (shouldAddLabel === false) {
-      if (pullRequest.labels.includes(TOO_LARGE_LABEL) === true) {
-        context.github.issues.removeLabel(context.issue({
-          name: TOO_LARGE_LABEL,
-        }));
+      if (pullRequest.labels.includes(LABEL_NAME) === true) {
+        removeLabel(context);
       }
 
       return;
@@ -132,11 +105,11 @@ module.exports = app => {
     /**
      * should add the label and it already has
      */
-    if (pullRequest.labels.includes(TOO_LARGE_LABEL) === true) {
+    if (pullRequest.labels.includes(LABEL_NAME) === true) {
       return;
     }
 
-    await addLabel(context, TOO_LARGE_LABEL, labelColor);
+    await addLabel(context);
 
     return;
   })

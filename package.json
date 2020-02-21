@@ -1,17 +1,11 @@
 {
-	"name": "size",
-	"version": "1.1.0",
-	"description": "Applies size labels to Pull Requests",
-	"author": "Benji Visser <benny@noqcks.io>",
-	"license": "MIT",
-	"repository": "https://github.com/noqcks/size.git",
-	"homepage": "https://github.com/noqcks/size",
-	"bugs": "https://github.com/noqcks/size/issues",
-	"keywords": [
-		"probot",
-		"github",
-		"probot-app"
-	],
+	"name": "too-large-pull-request",
+	"version": "1.0.0",
+	"description": "Tag too large PRs",
+	"author": "Eddie Wen <eddiewentw@gmail.com>",
+	"repository": "https://github.com/eddiewentw/too-large-pull-request.git",
+	"homepage": "https://github.com/eddiewentw/too-large-pull-request",
+	"bugs": "https://github.com/eddiewentw/too-large-pull-request/issues",
 	"scripts": {
 		"dev": "nodemon",
 		"start": "probot run ./index.js",
@@ -41,5 +35,6 @@
 	},
 	"jest": {
 		"testEnvironment": "node"
-	}
+	},
+	"license": "MIT",
 }

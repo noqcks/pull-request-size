@@ -96,7 +96,7 @@ describe('Size', () => {
   test('creates a label when a pull request is synchronized', async () => {
     // Simulates delivery of an issues.opened webhook
     await app.receive({
-      name: 'pull_request.synchronized',
+      name: 'pull_request.synchronize',
       payload: pullRequestSynchronizedPayload
     })
 

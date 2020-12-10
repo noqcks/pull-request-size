@@ -12,12 +12,12 @@ Configure Pull Request Size for your organization on the [GitHub app page](https
 
 | Name | Description |
 | ---- | ----------- |
-| <a id="size/XS" href="#size/XS">`size/XS`</a> | Denotes a PR that changes 0-9 lines. |
-| <a id="size/S" href="#size/S">`size/S`</a> | Denotes a PR that changes 10-29 lines. |
-| <a id="size/M" href="#size/M">`size/M`</a> | Denotes a PR that changes 30-99 lines. |
-| <a id="size/L" href="#size/L">`size/L`</a> | Denotes a PR that changes 100-499 lines. |
-| <a id="size/XL" href="#size/XL">`size/XL`</a> | Denotes a PR that changes 500-999 lines. |
-| <a id="size/XXL" href="#size/XXL">`size/XXL`</a> | Denotes a PR that changes 1000+ lines. |
+| <a id="size/XS" href="#size/XXS">`size/XXS`</a> | Denotes a PR that changes 0-9 lines. |
+| <a id="size/S" href="#size/XS">`size/XS`</a> | Denotes a PR that changes 10-29 lines. |
+| <a id="size/M" href="#size/S">`size/S`</a> | Denotes a PR that changes 30-99 lines. |
+| <a id="size/L" href="#size/M">`size/M`</a> | Denotes a PR that changes 100-249 lines. |
+| <a id="size/XL" href="#size/L">`size/L`</a> | Denotes a PR that changes 250-499 lines. |
+| <a id="size/XXL" href="#size/XL">`size/XL`</a> | Denotes a PR that changes 500+ lines. |
 
 Pull Request Size calculates the size of a PR as
 

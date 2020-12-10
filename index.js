@@ -4,29 +4,29 @@ const generated = require('@noqcks/generated');
 const minimatch = require("minimatch")
 
 const label = {
+  XXS: 'size/XXS',
   XS: 'size/XS',
   S: 'size/S',
   M: 'size/M',
   L: 'size/L',
-  XL: 'size/XL',
-  XXL: 'size/XXL'
+  XL: 'size/XL'
 }
 
 const colors = {
-  'size/XS': '3CBF00',
-  'size/S': '5D9801',
-  'size/M': '7F7203',
-  'size/L': 'A14C05',
-  'size/XL': 'C32607',
-  'size/XXL': 'E50009'
+  'size/XXS': '3CBF00',
+  'size/XS': '5D9801',
+  'size/S': '7F7203',
+  'size/M': 'A14C05',
+  'size/L': 'C32607',
+  'size/XL': 'E50009'
 }
 
 const sizes = {
-  S: 10,
-  M: 30,
-  L: 100,
-  Xl: 500,
-  Xxl: 1000
+  Xs: 10,
+  S: 30,
+  M: 100,
+  L: 250,
+  Xl: 500
 }
 
 
@@ -37,7 +37,9 @@ const sizes = {
  * @param lineCount The number of lines in the Pull Request.
  */
 function sizeLabel (lineCount) {
-  if (lineCount < sizes.S) {
+  if (lineCount < sizes.Xs) {
+    return label.XXS
+  } else if (lineCount < sizes.S) {
     return label.XS
   } else if (lineCount < sizes.M) {
     return label.S
@@ -45,13 +47,10 @@ function sizeLabel (lineCount) {
     return label.M
   } else if (lineCount < sizes.Xl) {
     return label.L
-  } else if (lineCount < sizes.Xxl) {
-    return label.XL
   }
 
-  return label.XXL
+  return label.XL
 }
-
 
 /**
  * getCustomGeneratedFiles will grab a list of file globs that determine

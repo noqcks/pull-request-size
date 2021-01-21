@@ -36,7 +36,7 @@ const sizes = {
  * in the Pull Request.
  * @param lineCount The number of lines in the Pull Request.
  */
-function sizeLabel (lineCount) {
+function sizeLabel(lineCount) {
   if (lineCount < sizes.Xs) {
     return label.XXS
   } else if (lineCount < sizes.S) {
@@ -59,21 +59,21 @@ function sizeLabel (lineCount) {
  * @param owner The owner of the repository.
  * @param repo The repository where the .gitattributes file is located.
  */
-async function getCustomGeneratedFiles (context, owner, repo) {
+async function getCustomGeneratedFiles(context, owner, repo) {
   let files = []
   const path = ".gitattributes"
 
   let response;
   try {
-    response = await context.github.repos.getContents({owner, repo, path})
+    response = await context.github.repos.getContents({ owner, repo, path })
   } catch (e) {
     return files
   }
 
-  const buff = new Buffer(response.data.content, 'base64')
+  const buff = Buffer.from(response.data.content, 'base64')
   const lines = buff.toString('ascii').split("\n")
 
-  lines.forEach(function(item) {
+  lines.forEach(function (item) {
     if (item.includes("linguist-generated=true")) {
       files.push(item.split(" ")[0])
     }
@@ -88,8 +88,8 @@ async function getCustomGeneratedFiles (context, owner, repo) {
  * @param file The file to compare.
  * @param globs A list of file globs to match the file.
  */
-function globMatch (file, globs) {
-  for (i=0; i < globs.length; i++) {
+function globMatch(file, globs) {
+  for (i = 0; i < globs.length; i++) {
     if (minimatch(file, globs[i])) {
       return true
       break;
@@ -98,14 +98,14 @@ function globMatch (file, globs) {
   return false
 }
 
-async function addLabel (context, name, color) {
-  const params = Object.assign({}, context.issue(), {labels: [name]})
+async function addLabel(context, name, color) {
+  const params = Object.assign({}, context.issue(), { labels: [name] })
 
   await ensureLabelExists(context, name, color)
   await context.github.issues.addLabels(params)
 }
 
-async function ensureLabelExists (context, name, color) {
+async function ensureLabelExists(context, name, color) {
   try {
     return await context.github.issues.getLabel(context.repo({
       name: name
@@ -131,43 +131,43 @@ module.exports = app => {
     'pull_request.synchronize',
     'pull_request.edited'], async context => {
 
-    const pullRequest = context.payload.pull_request;
-    const {owner: {login: owner}, name: repo} = pullRequest.base.repo;
-    const {number} = pullRequest;
-    let {additions, deletions} = pullRequest;
+      const pullRequest = context.payload.pull_request;
+      const { owner: { login: owner }, name: repo } = pullRequest.base.repo;
+      const { number } = pullRequest;
+      let { additions, deletions } = pullRequest;
 
-    // get list of custom generated files as defined in .gitattributes
-    const customGeneratedFiles = await getCustomGeneratedFiles(context, owner, repo)
+      // get list of custom generated files as defined in .gitattributes
+      const customGeneratedFiles = await getCustomGeneratedFiles(context, owner, repo)
 
-    // list of files modified in the pull request
-    const res = await context.github.pullRequests.listFiles({owner, repo, number})
+      // list of files modified in the pull request
+      const res = await context.github.pullRequests.listFiles({ owner, repo, number })
 
-    // if files are generated, remove them from the additions/deletions total
-    res.data.forEach(function(item) {
-      var g = new generated(item.filename, item.patch)
-      if (globMatch(item.filename, customGeneratedFiles) || g.isGenerated()) {
-        additions -= item.additions
-        deletions -= item.deletions
-      }
-    })
-
-    // calculate GitHub label
-    var labelToAdd = sizeLabel(additions + deletions)
-
-    // remove existing size/<size> label if it exists and is not labelToAdd
-    pullRequest.labels.forEach(function(prLabel) {
-      if(Object.values(label).includes(prLabel.name)) {
-        if (prLabel.name != labelToAdd) {
-          context.github.issues.removeLabel(context.issue({
-            name: prLabel.name
-          }))
+      // if files are generated, remove them from the additions/deletions total
+      res.data.forEach(function (item) {
+        var g = new generated(item.filename, item.patch)
+        if (globMatch(item.filename, customGeneratedFiles) || g.isGenerated()) {
+          additions -= item.additions
+          deletions -= item.deletions
         }
-      }
-    })
+      })
 
-    // assign GitHub label
-    return await addLabel(context, labelToAdd, colors[labelToAdd])
-  })
+      // calculate GitHub label
+      var labelToAdd = sizeLabel(additions + deletions)
+
+      // remove existing size/<size> label if it exists and is not labelToAdd
+      pullRequest.labels.forEach(function (prLabel) {
+        if (Object.values(label).includes(prLabel.name)) {
+          if (prLabel.name != labelToAdd) {
+            context.github.issues.removeLabel(context.issue({
+              name: prLabel.name
+            }))
+          }
+        }
+      })
+
+      // assign GitHub label
+      return await addLabel(context, labelToAdd, colors[labelToAdd])
+    })
 
   // we don't care about marketplace events
   app.on('marketplace_purchase', async context => {

@@ -1,4 +1,5 @@
 const minimatch = require("minimatch");
+const Sentry = require("@sentry/node");
 
 const label = {
   XXS: "size/XXS",
@@ -66,6 +67,7 @@ async function getCustomGeneratedFiles(context, owner, repo) {
   try {
     response = await context.github.repos.getContents({ owner, repo, path });
   } catch (e) {
+    Sentry.captureException(e);
     return files;
   }
 
@@ -105,6 +107,7 @@ async function ensureLabelExists(context, name, color) {
       })
     );
   } catch (e) {
+    Sentry.captureException(e);
     return context.github.issues.createLabel(
       context.repo({
         name,

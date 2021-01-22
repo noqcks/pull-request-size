@@ -1,8 +1,8 @@
 const axios = require("axios");
+const Sentry = require("@sentry/node");
 require("dotenv").config();
 
 async function createCommitStatus(statusesUrl, status) {
-  console.log(status);
   let description = "";
   if (status === "pending") {
     description = "Checking size";
@@ -25,6 +25,7 @@ async function createCommitStatus(statusesUrl, status) {
     const response = await axios(config);
     return response;
   } catch (error) {
+    Sentry.captureException(error);
     return error;
   }
 }

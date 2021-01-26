@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@noqcks/generated": "^1.0.0",
-    "@sentry/node": "^4.3.0",
+    "@sentry/node": "^6.0.1",
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "minimatch": "^3.0.4",

@@ -1,6 +1,6 @@
-require("dotenv").config();
 const Generated = require("@noqcks/generated");
 const { createCommitStatus } = require("./status");
+const Sentry = require("./sentry");
 const {
   label,
   colors,
@@ -9,7 +9,6 @@ const {
   getCustomGeneratedFiles,
   addLabel,
 } = require("./size");
-const Sentry = require("./sentry");
 
 async function fetchPrFileData(owner, repo, number, perPage, i, context) {
   try {
@@ -123,7 +122,4 @@ module.exports = (app) => {
       main(context);
     }
   );
-
-  // we don't care about marketplace events
-  // app.on("marketplace_purchase", async (context) => {});
 };

@@ -1,0 +1,54 @@
+
+> size@1.1.0 start /Users/yihe.guan/Documents/GitHub/pull-request-size
+> probot run ./src/index.js
+
+INFO	 (server): Running Probot v11.0.5 (Node.js: v14.15.1)
+INFO	 (server): Forwarding https://smee.io/O12KB9QvzMxtcgXD to http://localhost:3000/
+INFO	 (server): Listening on http://localhost:3000
+INFO	 (server): Connected
+INFO	 (http): POST / 200 - 13ms
+INFO	 (server): POST http://localhost:3000/ - 200
+RequestError [HttpError]: Resource not accessible by integration
+    at /Users/yihe.guan/Documents/GitHub/pull-request-size/node_modules/@octokit/request/dist-node/index.js:66:23
+    at processTicksAndRejections (internal/process/task_queues.js:93:5)
+    at async sendRequestWithRetries (/Users/yihe.guan/Documents/GitHub/pull-request-size/node_modules/@octokit/auth-app/dist-node/index.js:440:12)
+    at async Job.doExecute (/Users/yihe.guan/Documents/GitHub/pull-request-size/node_modules/bottleneck/light.js:405:18) {
+  status: 403,
+  headers: {
+    'access-control-allow-origin': '*',
+    'access-control-expose-headers': 'ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, Deprecation, Sunset',
+    connection: 'close',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'",
+    'content-type': 'application/json; charset=utf-8',
+    date: 'Tue, 26 Jan 2021 22:15:03 GMT',
+    'referrer-policy': 'origin-when-cross-origin, strict-origin-when-cross-origin',
+    server: 'GitHub.com',
+    status: '403 Forbidden',
+    'strict-transport-security': 'max-age=31536000; includeSubdomains; preload',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding, Accept, X-Requested-With',
+    'x-content-type-options': 'nosniff',
+    'x-frame-options': 'deny',
+    'x-github-media-type': 'github.v3; format=json',
+    'x-github-request-id': 'EFCE:0891:2E320:946B9:60109466',
+    'x-ratelimit-limit': '6700',
+    'x-ratelimit-remaining': '6699',
+    'x-ratelimit-reset': '1611702903',
+    'x-ratelimit-used': '1',
+    'x-xss-protection': '1; mode=block'
+  },
+  request: {
+    method: 'POST',
+    url: 'https://api.github.com/repos/RisePeopleInc/test_repo/statuses/dddad3291cb185d6f3311d1cb3c19314b2219d49',
+    headers: {
+      accept: 'application/vnd.github.v3+json',
+      'user-agent': 'probot/11.0.5 octokit-core.js/3.2.5 Node.js/14.15.1 (darwin; x64)',
+      authorization: 'token [REDACTED]',
+      'content-type': 'application/json; charset=utf-8'
+    },
+    body: '{"state":"pending"}',
+    request: { hook: [Function: bound bound register] }
+  },
+  documentation_url: 'https://docs.github.com/rest/reference/repos#create-a-commit-status'
+}

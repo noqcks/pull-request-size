@@ -3,7 +3,7 @@ require("dotenv").config();
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
-  environment: "development",
+  environment: process.env.NODE_ENV,
 });
 
 module.exports = Sentry;

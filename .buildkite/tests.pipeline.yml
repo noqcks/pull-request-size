@@ -1,0 +1,67 @@
+env:
+  REPO_NAME: "pull-request-size"
+  DOCKER_REGISTRY: "risepeoplein"
+
+# Deploy pipeline key
+deploy-pipeline-trigger: &deploy-pipeline-trigger
+  trigger: pull-request-deploy
+
+# Docker-compose file name
+docker-compose: &config
+  config: docker-compose.ci.yml
+
+steps:
+  - label: ":docker: Build Docker Image"
+    plugins:
+      - docker-compose#v3.1.0:
+          <<: *config
+          build: $REPO_NAME
+          image-repository: $DOCKER_REGISTRY/$REPO_NAME
+          cache-from: $REPO_NAME:$DOCKER_REGISTRY/$REPO_NAME:latest
+          args:
+            - VCS_REF=$BUILDKITE_COMMIT
+  - wait
+  - label: "Run Tests"
+    command: npm run test
+    plugins:
+      - docker-compose#v3.1.0:
+          <<: *config
+          run: $REPO_NAME
+  - label: "Run Lint"
+    command: npm run lint
+    plugins:
+      - docker-compose#v3.1.0:
+          <<: *config
+          run: $REPO_NAME
+  - wait
+  - label: ":docker: Push Docker Image"
+    branches: master
+    plugins:
+      - docker-compose#v3.1.0:
+          <<: *config
+          push:
+            - $REPO_NAME:$DOCKER_REGISTRY/$REPO_NAME:latest
+            - $REPO_NAME:$DOCKER_REGISTRY/$REPO_NAME:${BUILDKITE_COMMIT:0:7}
+  - wait
+  #- label: "Deploy To Test Environment"
+  #  <<: *deploy-pipeline-trigger
+  #  async: true
+  #  branches: master
+  #  build:
+  #    message: "Deploy to Test - $BUILDKITE_MESSAGE"
+  #    commit: "$BUILDKITE_COMMIT"
+  #    branch: "$BUILDKITE_BRANCH"
+  #    env:
+  #      PIPELINE_FILE: ".buildkite/deploy-test.pipeline.yml"
+
+  #- label: "Deploy to Staging Environment"
+  #  <<: *deploy-pipeline-trigger
+  #  async: true
+  #  branches: master
+  #  build:
+  #    message: ":rocket: Deploy to Staging - $BUILDKITE_MESSAGE"
+  #    commit: "$BUILDKITE_COMMIT"
+  #    branch: "$BUILDKITE_BRANCH"
+  #    env:
+  #      PIPELINE_FILE: ".buildkite/deploy-staging.pipeline.yml"
+  #      COMMIT_MESSAGE: "$BUILDKITE_MESSAGE"

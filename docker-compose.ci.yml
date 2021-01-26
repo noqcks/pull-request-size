@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  pull-request-size:
+    build:
+      context: .
+    working_dir: /myapp
+    environment:
+      COVERALLS_SERVICE_NAME: buildkite
+      COVERALLS_BUILD_NUMBER: "${BUILDKITE_BUILD_NUMBER}"
+      COVERALLS_GIT_COMMIT: "${BUILDKITE_COMMIT}"
+      COVERALLS_GIT_BRANCH: "${BUILDKITE_BRANCH}"
+      COVERALLS_REPO_TOKEN: NV925Id3lz6zDE3sMksjkhieTwr2oGtxg

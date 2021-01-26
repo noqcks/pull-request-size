@@ -124,6 +124,23 @@ async function addLabel(context, name, color) {
   await context.octokit.issues.addLabels(params);
 }
 
+async function fetchPrFileData(owner, repo, number, perPage, i, context) {
+  try {
+    // list of files modified in the pull request
+    const res = await context.octokit.pulls.listFiles({
+      owner,
+      repo,
+      pull_number: number,
+      per_page: perPage,
+      page: i,
+    });
+    return res;
+  } catch (e) {
+    Sentry.captureException(e);
+    return e;
+  }
+}
+
 module.exports = {
   label,
   colors,
@@ -133,4 +150,5 @@ module.exports = {
   ensureLabelExists,
   getCustomGeneratedFiles,
   addLabel,
+  fetchPrFileData,
 };

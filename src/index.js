@@ -12,7 +12,7 @@ const {
   getCustomGeneratedFiles,
   addLabel,
 } = require("./size");
-aaaaaaa
+
 async function fetchPrFileData(owner, repo, number, perPage, i, context) {
   // list of files modified in the pull request
   const res = await context.github.pullRequests.listFiles({

@@ -1,7 +1,4 @@
-const Sentry = require("@sentry/node");
 require("dotenv").config();
-
-Sentry.init({ dsn: process.env.SENTRY_DSN });
 const Generated = require("@noqcks/generated");
 const { createCommitStatus } = require("./status");
 const {
@@ -12,17 +9,23 @@ const {
   getCustomGeneratedFiles,
   addLabel,
 } = require("./size");
+const Sentry = require("./sentry");
 
 async function fetchPrFileData(owner, repo, number, perPage, i, context) {
-  // list of files modified in the pull request
-  const res = await context.github.pullRequests.listFiles({
-    owner,
-    repo,
-    number, // PR numbers
-    per_page: perPage,
-    page: i,
-  });
-  return res;
+  try {
+    // list of files modified in the pull request
+    const res = await context.octokit.pulls.listFiles({
+      owner,
+      repo,
+      pull_number: number,
+      per_page: perPage,
+      page: i,
+    });
+    return res;
+  } catch (e) {
+    Sentry.captureException(e);
+    return e;
+  }
 }
 
 async function main(context) {
@@ -40,12 +43,13 @@ async function main(context) {
     _links: {
       statuses: { href },
     },
+    head: { sha },
   } = pullRequest;
 
   let { additions, deletions } = pullRequest;
 
   // send a pending status before size label that is created.
-  await createCommitStatus(href, "pending");
+  await createCommitStatus(context, owner, repo, sha, "pending");
 
   const customGeneratedFiles = await getCustomGeneratedFiles(
     context,
@@ -81,14 +85,13 @@ async function main(context) {
     }
   });
 
-  console.log("add", additions, "del", deletions);
   // calculate GitHub label
   const labelToAdd = sizeLabel(additions + deletions);
   // remove existing size/<size> label if it exists and is not labelToAdd
   pullRequest.labels.forEach((prLabel) => {
     if (Object.values(label).includes(prLabel.name)) {
       if (prLabel.name !== labelToAdd) {
-        context.github.issues.removeLabel(
+        context.octokit.issues.removeLabel(
           context.issue({
             name: prLabel.name,
           })
@@ -101,7 +104,7 @@ async function main(context) {
   await addLabel(context, labelToAdd, colors[labelToAdd]);
 
   // change the status to success
-  await createCommitStatus(href, "success");
+  // await createCommitStatus(href, "success");
 }
 /**
  * This is the main event loop that runs when a revelent Pull Request

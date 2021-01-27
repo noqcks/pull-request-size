@@ -1,5 +1,5 @@
 const minimatch = require("minimatch");
-const Sentry = require("@sentry/node");
+const Sentry = require("./sentry");
 
 const label = {
   XXS: "size/XXS",
@@ -65,7 +65,7 @@ async function getCustomGeneratedFiles(context, owner, repo) {
 
   let response;
   try {
-    response = await context.github.repos.getContents({ owner, repo, path });
+    response = await context.octokit.repos.getContent({ owner, repo, path });
   } catch (e) {
     Sentry.captureException(e);
     return files;
@@ -101,14 +101,14 @@ function globMatch(file, globs) {
 
 async function ensureLabelExists(context, name, color) {
   try {
-    return await context.github.issues.getLabel(
+    return await context.octokit.issues.getLabel(
       context.repo({
         name,
       })
     );
   } catch (e) {
     Sentry.captureException(e);
-    return context.github.issues.createLabel(
+    return context.octokit.issues.createLabel(
       context.repo({
         name,
         color,
@@ -121,7 +121,24 @@ async function addLabel(context, name, color) {
   const params = { ...context.issue(), labels: [name] };
 
   await ensureLabelExists(context, name, color);
-  await context.github.issues.addLabels(params);
+  await context.octokit.issues.addLabels(params);
+}
+
+async function fetchPrFileData(owner, repo, number, perPage, i, context) {
+  try {
+    // list of files modified in the pull request
+    const res = await context.octokit.pulls.listFiles({
+      owner,
+      repo,
+      pull_number: number,
+      per_page: perPage,
+      page: i,
+    });
+    return res;
+  } catch (e) {
+    Sentry.captureException(e);
+    return e;
+  }
 }
 
 module.exports = {
@@ -133,4 +150,5 @@ module.exports = {
   ensureLabelExists,
   getCustomGeneratedFiles,
   addLabel,
+  fetchPrFileData,
 };

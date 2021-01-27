@@ -1,7 +1,3 @@
-const Sentry = require("@sentry/node");
-require("dotenv").config();
-
-Sentry.init({ dsn: process.env.SENTRY_DSN });
 const Generated = require("@noqcks/generated");
 const { createCommitStatus } = require("./status");
 const {
@@ -11,41 +7,28 @@ const {
   sizeLabel,
   getCustomGeneratedFiles,
   addLabel,
+  fetchPrFileData,
 } = require("./size");
-
-async function fetchPrFileData(owner, repo, number, perPage, i, context) {
-  // list of files modified in the pull request
-  const res = await context.github.pullRequests.listFiles({
-    owner,
-    repo,
-    number, // PR numbers
-    per_page: perPage,
-    page: i,
-  });
-  return res;
-}
 
 async function main(context) {
   const pullRequest = context.payload.pull_request;
-  // owner: RisePeopleInc
+
   const {
     owner: { login: owner },
     name: repo,
   } = pullRequest.base.repo;
 
-  // eg: number: pull#1
   const {
-    number,
+    number, // PR number
+    title,
     changed_files: changeFiles,
-    _links: {
-      statuses: { href },
-    },
+    head: { sha },
   } = pullRequest;
 
   let { additions, deletions } = pullRequest;
 
   // send a pending status before size label that is created.
-  await createCommitStatus(href, "pending");
+  await createCommitStatus(context, owner, repo, sha, "pending");
 
   const customGeneratedFiles = await getCustomGeneratedFiles(
     context,
@@ -65,7 +48,7 @@ async function main(context) {
     modifiedFiles = modifiedFiles.concat(responses[i].data);
   }
 
-  // if files are generated, remove them from the additions/deletions total
+  // if files are auto-generated, remove them from the additions/deletions total
   modifiedFiles.forEach((item) => {
     // the boundary of patch file is 3000 lines. If patch lines exceeds 3000 lines, then patch is null.
     if (!item.patch) {
@@ -81,14 +64,14 @@ async function main(context) {
     }
   });
 
-  console.log("add", additions, "del", deletions);
   // calculate GitHub label
   const labelToAdd = sizeLabel(additions + deletions);
+
   // remove existing size/<size> label if it exists and is not labelToAdd
   pullRequest.labels.forEach((prLabel) => {
     if (Object.values(label).includes(prLabel.name)) {
       if (prLabel.name !== labelToAdd) {
-        context.github.issues.removeLabel(
+        context.octokit.issues.removeLabel(
           context.issue({
             name: prLabel.name,
           })
@@ -100,9 +83,10 @@ async function main(context) {
   // assign size label
   await addLabel(context, labelToAdd, colors[labelToAdd]);
 
-  // change the status to success
-  await createCommitStatus(href, "success");
+  // change the status to successafte
+  await createCommitStatus(context, owner, repo, sha, "success");
 }
+
 /**
  * This is the main event loop that runs when a revelent Pull Request
  * action is triggered.
@@ -120,7 +104,4 @@ module.exports = (app) => {
       main(context);
     }
   );
-
-  // we don't care about marketplace events
-  // app.on("marketplace_purchase", async (context) => {});
 };

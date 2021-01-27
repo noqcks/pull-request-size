@@ -1,4 +1,3 @@
-const axios = require("axios");
 const Sentry = require("./sentry");
 require("dotenv").config();
 
@@ -32,17 +31,25 @@ async function createCommitStatus(statusesUrl, status) {
 }
 */
 
-async function createCommitStatus(context, owner, repo, sha) {
+async function createCommitStatus(context, owner, repo, sha, state) {
+  let description = "";
+  if (state === "pending") {
+    description = "Checking Pull Request Standard";
+  } else if (state === "success") {
+    description = "Pass";
+  }
+
   try {
     return await context.octokit.repos.createCommitStatus({
       owner,
       repo,
       sha,
-      state: "pending",
+      state,
+      description,
+      context: "PullRequest Bot",
     });
   } catch (e) {
     Sentry.captureException(e);
-    console.log(e);
     return e;
   }
 }

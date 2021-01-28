@@ -1,5 +1,6 @@
 const Generated = require("@noqcks/generated");
 const { createCommitStatus } = require("./status");
+const { checkJiraTicket } = require("./validation");
 const {
   label,
   colors,
@@ -29,6 +30,8 @@ async function main(context) {
 
   // send a pending status before size label that is created.
   await createCommitStatus(context, owner, repo, sha, "pending");
+
+  const [isTicketLinked, msg] = await checkJiraTicket(title);
 
   const customGeneratedFiles = await getCustomGeneratedFiles(
     context,
@@ -83,8 +86,16 @@ async function main(context) {
   // assign size label
   await addLabel(context, labelToAdd, colors[labelToAdd]);
 
-  // change the status to successafte
-  await createCommitStatus(context, owner, repo, sha, "success");
+  if (!isTicketLinked) {
+    if (msg === "format") {
+      await createCommitStatus(context, owner, repo, sha, "format error");
+    } else if (msg === "not found") {
+      await createCommitStatus(context, owner, repo, sha, "not found error");
+    }
+  } else {
+    // change the status to successafte
+    await createCommitStatus(context, owner, repo, sha, "success");
+  }
 }
 
 /**

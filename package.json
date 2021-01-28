@@ -25,6 +25,7 @@
     "@sentry/node": "^6.0.1",
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
+    "expect": "^26.6.2",
     "minimatch": "^3.0.4",
     "probot": "^11.0.5"
   },
@@ -40,7 +41,7 @@
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.0.0",
     "jest": "^26.6.3",
-    "nock": "^10.0.0",
+    "nock": "^10.0.6",
     "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
     "smee-client": "^1.0.2",

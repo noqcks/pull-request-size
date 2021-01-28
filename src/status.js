@@ -1,42 +1,20 @@
 const Sentry = require("./sentry");
 require("dotenv").config();
 
-/*
-async function createCommitStatus(statusesUrl, status) {
-  let description = "";
-  if (status === "pending") {
-    description = "Checking size";
-  } else if (status === "success") {
-    description = "Pass";
-  }
-  const config = {
-    method: "post",
-    url: statusesUrl,
-    headers: {
-      Authorization: process.env.GIT_TOKEN,
-    },
-    data: {
-      state: status,
-      description,
-      context: "PR check",
-    },
-  };
-  try {
-    const response = await axios(config);
-    return response;
-  } catch (error) {
-    Sentry.captureException(error);
-    return error;
-  }
-}
-*/
-
 async function createCommitStatus(context, owner, repo, sha, state) {
   let description = "";
   if (state === "pending") {
-    description = "Checking Pull Request Standard";
+    description = "Validating Pull Request Standards";
   } else if (state === "success") {
-    description = "Pass";
+    description = "Pull Request Standards Passed";
+  } else if (state.indexOf("error") !== -1) {
+    if (state === "format error") {
+      description =
+        "The PR title must begin with the Jira ticket name (JIRA-123)";
+    } else if (state === "not found error") {
+      description = "Could not found this ticket in JIRA";
+    }
+    state = "error";
   }
 
   try {
@@ -46,7 +24,7 @@ async function createCommitStatus(context, owner, repo, sha, state) {
       sha,
       state,
       description,
-      context: "PullRequest Bot",
+      context: "rise-pr-checker",
     });
   } catch (e) {
     Sentry.captureException(e);

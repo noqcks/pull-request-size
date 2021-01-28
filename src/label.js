@@ -1,13 +1,19 @@
 const minimatch = require("minimatch");
 const Sentry = require("./sentry");
 
-const label = {
+const labelSize = {
   XXS: "size/XXS",
   XS: "size/XS",
   S: "size/S",
   M: "size/M",
   L: "size/L",
   XL: "size/XL",
+};
+
+const labelJira = {
+  nojira: "no jira",
+  badtitle: "bad title",
+  jira: "jira",
 };
 
 const colors = {
@@ -17,6 +23,8 @@ const colors = {
   "size/M": "A14C05",
   "size/L": "C32607",
   "size/XL": "E50009",
+  "no jira": "FF9133",
+  "bad title": "E4E669",
 };
 
 const sizes = {
@@ -35,21 +43,31 @@ const sizes = {
  */
 function sizeLabel(lineCount) {
   if (lineCount < sizes.Xs) {
-    return label.XXS;
+    return labelSize.XXS;
   }
   if (lineCount < sizes.S) {
-    return label.XS;
+    return labelSize.XS;
   }
   if (lineCount < sizes.M) {
-    return label.S;
+    return labelSize.S;
   }
   if (lineCount < sizes.L) {
-    return label.M;
+    return labelSize.M;
   }
   if (lineCount < sizes.Xl) {
-    return label.L;
+    return labelSize.L;
   }
-  return label.XL;
+  return labelSize.XL;
+}
+
+function jiraLabel(msg) {
+  if (msg === "no jira") {
+    return labelJira.nojira;
+  }
+  if (msg === "bad title") {
+    return labelJira.badtitle;
+  }
+  return labelJira.jira;
 }
 
 /**
@@ -142,11 +160,12 @@ async function fetchPrFileData(owner, repo, number, perPage, i, context) {
 }
 
 module.exports = {
-  label,
+  labelSize,
   colors,
   sizes,
   globMatch,
   sizeLabel,
+  jiraLabel,
   ensureLabelExists,
   getCustomGeneratedFiles,
   addLabel,

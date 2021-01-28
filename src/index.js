@@ -2,14 +2,15 @@ const Generated = require("@noqcks/generated");
 const { createCommitStatus } = require("./status");
 const { checkJiraTicket } = require("./validation");
 const {
-  label,
+  labelSize,
   colors,
   globMatch,
   sizeLabel,
+  jiraLabel,
   getCustomGeneratedFiles,
   addLabel,
   fetchPrFileData,
-} = require("./size");
+} = require("./label");
 
 async function main(context) {
   const pullRequest = context.payload.pull_request;
@@ -68,12 +69,22 @@ async function main(context) {
   });
 
   // calculate GitHub label
-  const labelToAdd = sizeLabel(additions + deletions);
+  const sizeLabelToAdd = sizeLabel(additions + deletions);
+  const jiraLabelToAdd = jiraLabel(msg);
 
   // remove existing size/<size> label if it exists and is not labelToAdd
   pullRequest.labels.forEach((prLabel) => {
-    if (Object.values(label).includes(prLabel.name)) {
-      if (prLabel.name !== labelToAdd) {
+    if (msg === "jira ok") {
+      if (prLabel.name === "bad title" || prLabel.name === "no jira") {
+        context.octokit.issues.removeLabel(
+          context.issue({
+            name: prLabel.name,
+          })
+        );
+      }
+    }
+    if (Object.values(labelSize).includes(prLabel.name)) {
+      if (prLabel.name !== sizeLabelToAdd) {
         context.octokit.issues.removeLabel(
           context.issue({
             name: prLabel.name,
@@ -83,19 +94,25 @@ async function main(context) {
     }
   });
 
-  // assign size label
-  await addLabel(context, labelToAdd, colors[labelToAdd]);
+  await addLabel(context, sizeLabelToAdd, colors[sizeLabelToAdd]);
+  if (msg !== "jira ok") {
+    await addLabel(context, jiraLabelToAdd, colors[jiraLabelToAdd]);
+  }
 
+  await createCommitStatus(context, owner, repo, sha, "success");
+
+  /*
   if (!isTicketLinked) {
     if (msg === "format") {
-      await createCommitStatus(context, owner, repo, sha, "format error");
+      await createCommitStatus(context, owner, repo, sha, "bad title error");
     } else if (msg === "not found") {
-      await createCommitStatus(context, owner, repo, sha, "not found error");
+      await createCommitStatus(context, owner, repo, sha, "no jira error");
     }
   } else {
     // change the status to successafte
     await createCommitStatus(context, owner, repo, sha, "success");
   }
+  */
 }
 
 /**

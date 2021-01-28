@@ -8,7 +8,7 @@ async function checkJiraTicket(title) {
 
   // PR title must begin with ticket name
   if (!title.match(regex)) {
-    return [false, "format"];
+    return [false, "bad title"];
   }
 
   // extract ticket name from pr title
@@ -30,10 +30,10 @@ async function checkJiraTicket(title) {
 
   try {
     await axios(config);
-    return [true, "ok"];
+    return [true, "jira ok"];
   } catch (e) {
     Sentry.captureException(e);
-    return [false, "not found"];
+    return [false, "no jira"];
   }
 }
 

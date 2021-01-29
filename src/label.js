@@ -1,13 +1,19 @@
 const minimatch = require("minimatch");
 const Sentry = require("./sentry");
 
-const label = {
+const labelSize = {
   XXS: "size/XXS",
   XS: "size/XS",
   S: "size/S",
   M: "size/M",
   L: "size/L",
   XL: "size/XL",
+};
+
+const labelJira = {
+  nojira: "no jira",
+  badtitle: "bad title",
+  jira: "jira",
 };
 
 const colors = {
@@ -17,6 +23,8 @@ const colors = {
   "size/M": "A14C05",
   "size/L": "C32607",
   "size/XL": "E50009",
+  "no jira": "FF9133",
+  "bad title": "E4E669",
 };
 
 const sizes = {
@@ -27,6 +35,19 @@ const sizes = {
   Xl: 500,
 };
 
+const descriptions = {
+  "size/XXS": `Lines changed < ${sizes.Xs}`,
+  "size/XS": `Lines changed < ${sizes.S}`,
+  "size/S": `Lines changed < ${sizes.M}`,
+  "size/M": `Lines changed < ${sizes.L}`,
+  "size/L": `Lines changed < ${sizes.Xl}`,
+  "size/XL": `Lines changed > ${sizes.Xl}`,
+  noJira: "Could not found this ticket in JIRA",
+  badTitle: "The PR title must begin with the Jira ticket name (e.g. JIRA-123)",
+  success: "Pull Request Standards Passed",
+  pending: "Validating Pull Request Standards",
+};
+
 /**
  * sizeLabel will return a string label that can be assigned to a
  * GitHub Pull Request. The label is determined by the lines of code
@@ -35,21 +56,31 @@ const sizes = {
  */
 function sizeLabel(lineCount) {
   if (lineCount < sizes.Xs) {
-    return label.XXS;
+    return labelSize.XXS;
   }
   if (lineCount < sizes.S) {
-    return label.XS;
+    return labelSize.XS;
   }
   if (lineCount < sizes.M) {
-    return label.S;
+    return labelSize.S;
   }
   if (lineCount < sizes.L) {
-    return label.M;
+    return labelSize.M;
   }
   if (lineCount < sizes.Xl) {
-    return label.L;
+    return labelSize.L;
   }
-  return label.XL;
+  return labelSize.XL;
+}
+
+function jiraLabel(msg) {
+  if (msg === "no jira") {
+    return labelJira.nojira;
+  }
+  if (msg === "bad title") {
+    return labelJira.badtitle;
+  }
+  return labelJira.jira;
 }
 
 /**
@@ -99,7 +130,7 @@ function globMatch(file, globs) {
   return false;
 }
 
-async function ensureLabelExists(context, name, color) {
+async function ensureLabelExists(context, name, color, description) {
   try {
     return await context.octokit.issues.getLabel(
       context.repo({
@@ -112,15 +143,15 @@ async function ensureLabelExists(context, name, color) {
       context.repo({
         name,
         color,
+        description,
       })
     );
   }
 }
 
-async function addLabel(context, name, color) {
+async function addLabel(context, name, color, description) {
   const params = { ...context.issue(), labels: [name] };
-
-  await ensureLabelExists(context, name, color);
+  await ensureLabelExists(context, name, color, description);
   await context.octokit.issues.addLabels(params);
 }
 
@@ -141,14 +172,25 @@ async function fetchPrFileData(owner, repo, number, perPage, i, context) {
   }
 }
 
+function removeLabel(context, prLabel) {
+  context.octokit.issues.removeLabel(
+    context.issue({
+      name: prLabel.name,
+    })
+  );
+}
+
 module.exports = {
-  label,
+  labelSize,
   colors,
+  descriptions,
   sizes,
   globMatch,
   sizeLabel,
+  jiraLabel,
   ensureLabelExists,
   getCustomGeneratedFiles,
   addLabel,
   fetchPrFileData,
+  removeLabel,
 };

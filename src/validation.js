@@ -2,13 +2,19 @@ const axios = require("axios");
 const Sentry = require("./sentry");
 require("dotenv").config();
 
+const messages = {
+  badTitle: "bad title",
+  noJira: "no jira",
+  goodJira: "jira ok",
+};
+
 async function checkJiraTicket(title) {
   title = title.trim();
   const regex = /^[a-z]{2,6}( |-)[0-9]{1,6}/gi;
 
   // PR title must begin with ticket name
   if (!title.match(regex)) {
-    return [false, "format"];
+    return [false, messages.badTitle];
   }
 
   // extract ticket name from pr title
@@ -30,13 +36,14 @@ async function checkJiraTicket(title) {
 
   try {
     await axios(config);
-    return [true, "ok"];
+    return [true, messages.goodJira];
   } catch (e) {
     Sentry.captureException(e);
-    return [false, "not found"];
+    return [false, messages.noJira];
   }
 }
 
 module.exports = {
+  messages,
   checkJiraTicket,
 };

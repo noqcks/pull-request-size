@@ -1,18 +1,18 @@
 const Sentry = require("./sentry");
+const { descriptions } = require("./label");
 require("dotenv").config();
 
 async function createCommitStatus(context, owner, repo, sha, state) {
-  let description = "";
+  let description;
   if (state === "pending") {
-    description = "Validating Pull Request Standards";
+    description = descriptions.pending;
   } else if (state === "success") {
-    description = "Pull Request Standards Passed";
+    description = descriptions.success;
   } else if (state.indexOf("error") !== -1) {
-    if (state === "format error") {
-      description =
-        "The PR title must begin with the Jira ticket name (JIRA-123)";
-    } else if (state === "not found error") {
-      description = "Could not found this ticket in JIRA";
+    if (state === "bad title error") {
+      description = descriptions.badTitle;
+    } else if (state === "no jira error") {
+      description = descriptions.noJira;
     }
     state = "error";
   }
@@ -24,7 +24,7 @@ async function createCommitStatus(context, owner, repo, sha, state) {
       sha,
       state,
       description,
-      context: "rise-pr-checker",
+      context: "ribot",
     });
   } catch (e) {
     Sentry.captureException(e);

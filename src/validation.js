@@ -8,7 +8,7 @@ const messages = {
   goodJira: "jira ok",
 };
 
-async function checkJiraTicket(title) {
+async function checkJiraTicket(title, headers) {
   title = title.trim();
   const regex = /^[a-z]{2,6}( |-)[0-9]{1,6}/gi;
 
@@ -28,10 +28,7 @@ async function checkJiraTicket(title) {
   const config = {
     method: "get",
     url: `https://risepeople.atlassian.net/rest/api/latest/issue/${ticketNum}`,
-    auth: {
-      username: process.env.USER_NAME,
-      password: process.env.PASSWORD,
-    },
+    headers,
   };
 
   try {

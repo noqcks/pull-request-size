@@ -138,7 +138,6 @@ async function ensureLabelExists(context, name, color, description) {
       })
     );
   } catch (e) {
-    Sentry.captureException(e);
     return context.octokit.issues.createLabel(
       context.repo({
         name,

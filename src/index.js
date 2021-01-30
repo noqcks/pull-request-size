@@ -1,6 +1,7 @@
 const Generated = require("@noqcks/generated");
 const { createCommitStatus } = require("./status");
 const { checkJiraTicket } = require("./validation");
+const { auth } = require("./auth");
 const {
   labelSize,
   colors,
@@ -31,10 +32,12 @@ async function main(context) {
 
   let { additions, deletions } = pullRequest;
 
+  const jiraHeaders = await auth();
+
   // send a pending status before size label that is created.
   await createCommitStatus(context, owner, repo, sha, "pending");
 
-  const [isTicketLinked, msg] = await checkJiraTicket(title);
+  const [isTicketLinked, msg] = await checkJiraTicket(title, jiraHeaders);
 
   const customGeneratedFiles = await getCustomGeneratedFiles(
     context,

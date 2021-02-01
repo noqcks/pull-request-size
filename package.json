@@ -18,6 +18,7 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "jest ",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage",
+    "coverage": "jest --coverage",
     "lint": "eslint src --ext .js || true"
   },
   "dependencies": {

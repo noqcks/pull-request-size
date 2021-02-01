@@ -22,7 +22,7 @@ steps:
             - VCS_REF=$BUILDKITE_COMMIT
   - wait
   - label: "Run Tests"
-    command: npm run test
+    command: npm run test && npm run coverage
     plugins:
       - docker-compose#v3.1.0:
           <<: *config

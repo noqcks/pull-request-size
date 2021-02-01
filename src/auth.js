@@ -76,4 +76,8 @@ const auth = async () => {
   }
 };
 
-module.exports = { auth };
+module.exports = {
+  auth,
+  refreshToken,
+  validateToken,
+};

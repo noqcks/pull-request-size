@@ -1,134 +1,236 @@
-describe("Filter function", () => {
-  test("it should filter by a search term (link)", () => {
-    const input = [
-      { id: 1, url: "https://www.url1.dev" },
-      { id: 2, url: "https://www.url2.dev" },
-      { id: 3, url: "https://www.link3.dev" }
-    ];
+const axios = require("axios");
+const { createCommitStatus } = require("../src/status");
+const { checkJiraTicket } = require("../src/validation");
+const { auth, validateToken, refreshToken } = require("../src/auth");
+const {
+  ensureLabelExists,
+  removeLabel,
+  fetchPrFileData,
+  jiraLabel,
+  sizeLabel,
+} = require("../src/label");
 
-    const output = [{ id: 3, url: "https://www.link3.dev" }];
+jest.mock("axios");
 
-    expect(filterByTerm(input, "link")).toEqual(output);
-
-    expect(filterByTerm(input, "LINK")).toEqual(output);
+describe("Commit Status Tests", () => {
+  let context;
+  beforeEach(() => {
+    context = {
+      octokit: {
+        repos: {
+          createCommitStatus: jest.fn().mockReturnValue(Promise.resolve({})),
+        },
+      },
+    };
+  });
+  test("Should send JIRA a not found commit status ", async () => {
+    createCommitStatus(context, "Amazon", "repo", "ahs1h2a", "not found error");
+    expect(context.octokit.repos.createCommitStatus).toHaveBeenCalled();
   });
 });
 
-function filterByTerm(inputArr, searchTerm) {
-  const regex = new RegExp(searchTerm, "i");
-  return inputArr.filter(function (arrayElement) {
-    return arrayElement.url.match(regex);
-  });
-}
-
-
-/*
-const { Application } = require('probot')
-const expect = require('expect')
-const plugin = require('..')
-
-
-const pullRequestLabelToAdd = require('./fixtures/pull_request.label_to_add.json')
-const pullRequestOpenedPayload = require('./fixtures/pull_request.opened.json')
-const pullRequestEditedPayload = require('./fixtures/pull_request.edited.json')
-const pullRequestSynchronizedPayload = require('./fixtures/pull_request.synchronized.json')
-
-describe('Size', () => {
-  let app, github
-
+describe("Get/Remove Labels Tests", () => {
+  let context;
   beforeEach(() => {
-    app = new Application()
-    // Initialize the app based on the code from index.js
-    plugin(app)
-    // This is an easy way to mock out the GitHub API
-    github = {
-      pullRequests: {
-        listFiles: jest.fn().mockReturnValue({"data": [{
-          filename: 'helpers.js',
-          patch: '<fake data>',
-          additions: 3,
-          deletions: 1,
+    context = {
+      // repo: { owner: "RisePeopleInc", repo: "test_repo", name: "bad title" },
+      repo: jest.fn().mockReturnValue({
+        owner: "RisePeopleInc",
+        repo: "test_repo",
+        name: "bad title",
+        color: "blue",
+        description: "des",
+      }),
+      issue: jest.fn().mockReturnValue({ name: "no jira" }),
+      octokit: {
+        issues: {
+          getLabel: jest.fn().mockReturnValue(Promise.resolve({})),
+          removeLabel: jest.fn().mockReturnValue(Promise.resolve({})),
+          addLabels: jest.fn().mockReturnValue(Promise.resolve({})),
         },
-        {
-          filename: 'package-lock.json',
-          additions: 45,
-          deletions: 0,
-          patch:'<fake data>' }
-        ]})
       },
-      issues: {
-        addLabels: jest.fn().mockReturnValue(Promise.resolve({})),
-        removeLabel: jest.fn().mockReturnValue(Promise.resolve({})),
-        createLabel: jest.fn().mockReturnValue(Promise.resolve({}))
-      }
-    }
-    // Passes the mocked out GitHub API into out app instance
-    app.auth = () => Promise.resolve(github)
-  })
+    };
+  });
 
-  test('creates a label when a pull request is opened', async () => {
-    // Simulates delivery of an issues.opened webhook
-    await app.receive({
-      name: 'pull_request.opened',
-      payload: pullRequestOpenedPayload
-    })
+  test("Should get a existing label ", async () => {
+    ensureLabelExists(context, "bad title2", "935ae7", "des");
+    expect(context.octokit.issues.getLabel).toHaveBeenCalled();
+  });
 
-    // This test passes if the code in your index.js file calls
-    // `context.github.issues.addLabels`
-    expect(github.pullRequests.listFiles).toHaveBeenCalled()
-    expect(github.issues.addLabels).toHaveBeenCalled()
-  })
+  test("Should delete a label ", async () => {
+    const prLabel = {
+      name: "no jira",
+    };
+    removeLabel(context, prLabel);
+    expect(context.octokit.issues.removeLabel).toHaveBeenCalled();
+  });
+});
 
-  test('remove existing size labels', async () => {
-    // Simulates delivery of an issues.opened webhook
-    await app.receive({
-      name: 'pull_request.edited',
-      payload: pullRequestEditedPayload
-    })
+describe("Create a Label Test", () => {
+  let context;
+  beforeEach(() => {
+    context = {
+      // repo: { owner: "RisePeopleInc", repo: "test_repo", name: "bad title" },
+      repo: jest.fn().mockReturnValue({
+        owner: "RisePeopleInc",
+        repo: "test_repo",
+        name: "bad title",
+        color: "blue",
+        description: "des",
+      }),
+      octokit: {
+        issues: {
+          createLabel: jest.fn().mockReturnValue(Promise.resolve({})),
+          getLabel: jest.fn().mockImplementation(() => {
+            throw new Error();
+          }),
+        },
+      },
+    };
+  });
 
+  test("Should create a new label in the PR ", async () => {
+    ensureLabelExists(context, "bad title2", "935ae7", "des");
+    expect(context.octokit.issues.createLabel).toHaveBeenCalled();
+  });
+});
 
-    expect(github.pullRequests.listFiles).toHaveBeenCalled()
-    expect(github.issues.removeLabel).toHaveBeenCalledTimes(2)
-    expect(github.issues.addLabels).toHaveBeenCalled()
-  })
+describe("Fetch Pull Request Files Tests", () => {
+  let context;
+  beforeEach(() => {
+    context = {
+      octokit: {
+        pulls: {
+          listFiles: jest.fn().mockReturnValue({
+            data: [
+              {
+                filename: "helpers.js",
+                patch: "<fake data>",
+                additions: 3,
+                deletions: 1,
+              },
+              {
+                filename: "package-lock.json",
+                additions: 45,
+                deletions: 0,
+                patch: "<fake data>",
+              },
+            ],
+          }),
+        },
+      },
+    };
+  });
 
-  test('doesnt remove size label if it is labelToAdd', async () => {
-    // Simulates delivery of an issues.opened webhook
-    await app.receive({
-      name: 'pull_request.edited',
-      payload: pullRequestLabelToAdd
-    })
+  test("Should fetch a list pr files", async () => {
+    const res = await fetchPrFileData("Rise", "repo", "2", 30, 1, context);
+    const objRes = res.data[0];
+    expect(context.octokit.pulls.listFiles).toHaveBeenCalled();
+    expect(objRes.filename).toEqual("helpers.js");
+    expect(objRes.patch).toEqual("<fake data>");
+    expect(objRes.additions).toEqual(3);
+    expect(objRes.deletions).toEqual(1);
+  });
+});
 
-    expect(github.pullRequests.listFiles).toHaveBeenCalled()
-    // only called one time even though we have 2 labels
-    expect(github.issues.removeLabel).toHaveBeenCalledTimes(1)
-    expect(github.issues.addLabels).toHaveBeenCalled()
-  })
+describe("Jira/Size Label Object Simple Tests", () => {
+  test("Should get a no jira label", async () => {
+    const res = jiraLabel("no jira");
+    expect(res).toEqual("no jira");
+  });
 
-  test('creates a label when a pull request is edited', async () => {
-    // Simulates delivery of an issues.opened webhook
-    await app.receive({
-      name: 'pull_request.edited',
-      payload: pullRequestEditedPayload
-    })
+  test("Should get XXS size label", async () => {
+    const res = sizeLabel(5);
+    expect(res).toEqual("size/XXS");
+  });
+});
 
-    // This test passes if the code in your index.js file calls
-    // `context.github.issues.addLabels`
-    expect(github.pullRequests.listFiles).toHaveBeenCalled()
-    expect(github.issues.addLabels).toHaveBeenCalled()
-  })
+describe("Jira Status Valition Test", () => {
+  test("Should return good jira msg", async () => {
+    axios.mockResolvedValue({
+      status: 200,
+    });
+    const title = "OPS-123";
+    const headers = {
+      Authorization: "ItIsAFakeToken",
+    };
+    const [flag, msg] = await checkJiraTicket(title, headers);
+    expect(flag).toEqual(true);
+    expect(msg).toEqual("jira ok");
+  });
 
-  test('creates a label when a pull request is synchronized', async () => {
-    // Simulates delivery of an issues.opened webhook
-    await app.receive({
-      name: 'pull_request.synchronize',
-      payload: pullRequestSynchronizedPayload
-    })
+  test("Should return no jira msg", async () => {
+    axios.mockRejectedValue({
+      status: 404,
+    });
+    const title = "COVID 19";
+    const headers = {
+      Authorization: "ItIsAFakeToken",
+    };
+    const [flag, msg] = await checkJiraTicket(title, headers);
+    expect(flag).toEqual(false);
+    expect(msg).toEqual("no jira");
+  });
 
-    // This test passes if the code in your index.js file calls
-    // `context.github.issues.addLabels`
-    expect(github.pullRequests.listFiles).toHaveBeenCalled()
-    expect(github.issues.addLabels).toHaveBeenCalled()
-  })
-})
-*/
+  test("Should return bad title msg", async () => {
+    const title = "hahaha";
+    const headers = {
+      Authorization: "ItIsAFakeToken",
+    };
+    const [flag, msg] = await checkJiraTicket(title, headers);
+    expect(flag).toEqual(false);
+    expect(msg).toEqual("bad title");
+  });
+});
+
+describe("Authorization Tests", () => {
+  test("Should return a true token status ", async () => {
+    axios.mockResolvedValue({
+      status: 200,
+    });
+    const tokenStatus = await validateToken();
+    expect(tokenStatus).toEqual(true);
+  });
+
+  test("Should return a false token status ", async () => {
+    axios.mockRejectedValue({
+      status: 400,
+    });
+    const tokenStatus = await validateToken();
+    expect(tokenStatus).toEqual(false);
+  });
+
+  test("Should get a refreshed token", async () => {
+    axios.mockResolvedValue({
+      status: 200,
+      data: {
+        access_token: "Bearer iamadummytoken",
+      },
+    });
+    const refreshedToken = await refreshToken(0);
+    expect(refreshedToken).toEqual("Bearer iamadummytoken");
+  });
+
+  test("Should refreshed token 5 times and failed", async () => {
+    axios.mockRejectedValue({
+      status: 401,
+    });
+    const refreshedToken = await refreshToken(0);
+    expect(refreshedToken).not.toBeNull();
+  });
+
+  test("Should not get the authorization", async () => {
+    const headers = {
+      status: 200,
+      data: {
+        access_token: "Bearer iamadummytoken",
+      },
+    };
+    jest.mock("../src/auth", () => ({
+      validateToken: jest.fn().mockReturnValue(false),
+      refreshToken: jest.fn().mockReturnValue(headers),
+    }));
+    const res = await auth();
+    expect(res).not.toBeNull();
+  });
+});

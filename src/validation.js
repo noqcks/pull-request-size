@@ -1,6 +1,5 @@
 const axios = require("axios");
 const Sentry = require("./sentry");
-require("dotenv").config();
 
 const messages = {
   badTitle: "bad title",

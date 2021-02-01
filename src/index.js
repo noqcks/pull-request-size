@@ -140,3 +140,7 @@ module.exports = (app) => {
     }
   );
 };
+
+module.exports = {
+  main,
+};

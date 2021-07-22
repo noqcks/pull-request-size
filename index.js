@@ -66,12 +66,12 @@ async function getCustomGeneratedFiles (context, owner, repo) {
 
   let response;
   try {
-    response = await context.github.repos.getContents({owner, repo, path})
+    response = await context.octokit.repos.getContent({owner, repo, path})
   } catch (e) {
     return files
   }
 
-  const buff = new Buffer(response.data.content, 'base64')
+  const buff = Buffer.from(response.data.content, 'base64')
   const lines = buff.toString('ascii').split("\n")
 
   lines.forEach(function(item) {
@@ -103,16 +103,16 @@ async function addLabel (context, name, color) {
   const params = Object.assign({}, context.issue(), {labels: [name]})
 
   await ensureLabelExists(context, name, color)
-  await context.github.issues.addLabels(params)
+  await context.octokit.issues.addLabels(params)
 }
 
 async function ensureLabelExists (context, name, color) {
   try {
-    return await context.github.issues.getLabel(context.repo({
+    return await context.octokit.issues.getLabel(context.repo({
       name: name
     }))
   } catch (e) {
-    return context.github.issues.createLabel(context.repo({
+    return context.octokit.issues.createLabel(context.repo({
       name: name,
       color: color
     }))
@@ -133,15 +133,19 @@ module.exports = app => {
     'pull_request.edited'], async context => {
 
     const pullRequest = context.payload.pull_request;
+    const number = pullRequest.number;
     const {owner: {login: owner}, name: repo} = pullRequest.base.repo;
-    const {number} = pullRequest;
     let {additions, deletions} = pullRequest;
 
     // get list of custom generated files as defined in .gitattributes
     const customGeneratedFiles = await getCustomGeneratedFiles(context, owner, repo)
 
     // list of files modified in the pull request
-    const res = await context.github.pullRequests.listFiles({owner, repo, number})
+    const res = await context.octokit.pulls.listFiles({
+      owner: owner,
+      repo: repo,
+      pull_number: number,
+    })
 
     // if files are generated, remove them from the additions/deletions total
     res.data.forEach(function(item) {
@@ -159,7 +163,7 @@ module.exports = app => {
     pullRequest.labels.forEach(function(prLabel) {
       if(Object.values(label).includes(prLabel.name)) {
         if (prLabel.name != labelToAdd) {
-          context.github.issues.removeLabel(context.issue({
+          context.octokit.issues.removeLabel(context.issue({
             name: prLabel.name
           }))
         }

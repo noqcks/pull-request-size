@@ -19,13 +19,12 @@ Configure Pull Request Size for your organization on the [GitHub app page](https
 | <a id="size/XL" href="#size/XL">`size/XL`</a> | Denotes a PR that changes 500-999 lines. |
 | <a id="size/XXL" href="#size/XXL">`size/XXL`</a> | Denotes a PR that changes 1000+ lines. |
 
-Pull Request Size calculates the size of a PR as
 
 ```
 total additions + total deletions - (all generated¹ file additions/deletions)
 ```
 
-¹ A generated file is either one of the standard generated files as defined in [noqcks/generated](https://github.com/noqcks/generated/blob/master/lib/generated.js) or defined with `linguist-generated=true` in a `.gitattributes` file. 
+¹ A generated file is either one of the standard generated files as defined in [noqcks/generated](https://github.com/noqcks/generated/blob/master/lib/generated.js) or defined with `linguist-generated=true` in a `.gitattributes` file.
 
 ## Excluding Files
 
@@ -37,7 +36,7 @@ For example to mark all `.meta` files as generated, add this line to `.gitattrib
 *.meta linguist-generated=true
 ```
 
-A `.gitattributes` file uses the same rules for matching as `.gitignore` files. See [GitHub documenation](https://docs.github.com/en/github/administering-a-repository/managing-repository-settings/customizing-how-changed-files-appear-on-github) on the linguist-generated flag for more info. 
+A `.gitattributes` file uses the same rules for matching as `.gitignore` files. See [GitHub documenation](https://docs.github.com/en/github/administering-a-repository/managing-repository-settings/customizing-how-changed-files-appear-on-github) on the linguist-generated flag for more info.
 
 ## Setup
 

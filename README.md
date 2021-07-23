@@ -25,7 +25,19 @@ Pull Request Size calculates the size of a PR as
 total additions + total deletions - (all generated¹ file additions/deletions)
 ```
 
-¹ A generated file is either one of the standard generated files as defined in [noqcks/generated](https://github.com/noqcks/generated/blob/master/lib/generated.js) or defined with `linguist-generated=true` in a `.gitattributes` file. See [Customizing how changed files appear on GitHub](https://help.github.com/articles/customizing-how-changed-files-appear-on-github/) for more information.
+¹ A generated file is either one of the standard generated files as defined in [noqcks/generated](https://github.com/noqcks/generated/blob/master/lib/generated.js) or defined with `linguist-generated=true` in a `.gitattributes` file. 
+
+## Excluding Files
+
+If you have files that you would not like to be included in the calculation for a Pull Request's size, you can modify the `.gitattributes` file with the flag `linguist-generated=true` on your file or file pattern.
+
+For example to mark all `.meta` files as generated, add this line to `.gitattributes`
+
+```
+*.meta linguist-generated=true
+```
+
+A `.gitattributes` file uses the same rules for matching as `.gitignore` files. See [GitHub documenation](https://docs.github.com/en/github/administering-a-repository/managing-repository-settings/customizing-how-changed-files-appear-on-github) on the linguist-generated flag for more info. 
 
 ## Setup
 

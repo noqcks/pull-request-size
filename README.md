@@ -55,7 +55,5 @@ npm start
 
 ## License
 
-[MIT](LICENSE) © 2018 Benji Visser <benny@noqcks.io>
-
-## TODO
+[MIT](LICENSE) © 2021 Benji Visser <benji@093b.org>
 

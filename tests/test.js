@@ -1,108 +1,139 @@
-const { Application } = require('probot')
+const { Probot, ProbotOctokit } = require("probot");
 const expect = require('expect')
-const plugin = require('..')
+const myProbotApp = require('..')
+const nock = require("nock");
 
+const owner = "noqcks"
+const repo = "gucci"
+const pull_number = "31"
+const label = {
+  xsmall: "size%2FXS",
+  small: "size%2FS",
+  medium: "size%2FM"
+}
+const baseURL = `/repos/${owner}/${repo}`
 
-const pullRequestLabelToAdd = require('./fixtures/pull_request.label_to_add.json')
-const pullRequestOpenedPayload = require('./fixtures/pull_request.opened.json')
-const pullRequestEditedPayload = require('./fixtures/pull_request.edited.json')
-const pullRequestSynchronizedPayload = require('./fixtures/pull_request.synchronized.json')
+// Mocks
+const mockListFiles = require('./mocks/listFiles.json')
+const mockLabel = require('./mocks/label.json')
 
-describe('Size', () => {
-  let app, github
+// Fixtures
+const prOpenedPayload = require('./fixtures/pull_request.opened.json')
+const prEditedPayload = require('./fixtures/pull_request.edited.json')
+const prSynchronizedPayload = require('./fixtures/pull_request.synchronized.json')
 
+describe('Pull Request Size', () => {
+  let probot;
   beforeEach(() => {
-    app = new Application()
-    // Initialize the app based on the code from index.js
-    plugin(app)
-    // This is an easy way to mock out the GitHub API
-    github = {
-      pullRequests: {
-        listFiles: jest.fn().mockReturnValue({"data": [{
-          filename: 'helpers.js',
-          patch: '<fake data>',
-          additions: 3,
-          deletions: 1,
-        },
-        {
-          filename: 'package-lock.json',
-          additions: 45,
-          deletions: 0,
-          patch:'<fake data>' }
-        ]})
-      },
-      issues: {
-        addLabels: jest.fn().mockReturnValue(Promise.resolve({})),
-        removeLabel: jest.fn().mockReturnValue(Promise.resolve({})),
-        createLabel: jest.fn().mockReturnValue(Promise.resolve({}))
-      }
-    }
-    // Passes the mocked out GitHub API into out app instance
-    app.auth = () => Promise.resolve(github)
+    probot = new Probot({
+      githubToken: "test",
+      Octokit: ProbotOctokit.defaults({
+        retry: { enabled: false },
+        throttle: { enabled: false },
+      }),
+    });
+    myProbotApp(probot)
   })
 
   test('creates a label when a pull request is opened', async () => {
-    // Simulates delivery of an issues.opened webhook
-    await app.receive({
-      name: 'pull_request.opened',
-      payload: pullRequestOpenedPayload
-    })
+    nock("https://api.github.com")
+      // listFiles
+      .get(baseURL+`/pulls/${pull_number}/files`)
+      .reply(200, mockListFiles)
+      // getLabel
+      .get(baseURL+`/labels/${label.small}`)
+      .reply(200, mockLabel)
+      // createLabel
+      .post(baseURL+`/labels`)
+      .reply(201, mockLabel)
+      // addLabels
+      .post(baseURL+`/issues/${pull_number}/labels`, (body) => {
+        expect(body).toStrictEqual({"labels": ["size/S"]})
+        return true;
+      })
+      .reply(200, [mockLabel])
 
-    // This test passes if the code in your index.js file calls
-    // `context.github.issues.addLabels`
-    expect(github.pullRequests.listFiles).toHaveBeenCalled()
-    expect(github.issues.addLabels).toHaveBeenCalled()
+    // Simulates delivery of an issues.opened webhook
+    await probot.receive({
+      name: 'pull_request.opened',
+      payload: prOpenedPayload
+    })
   })
 
   test('remove existing size labels', async () => {
+    nock("https://api.github.com")
+      // listFiles
+      .get(baseURL+`/pulls/${pull_number}/files`)
+      .reply(200, mockListFiles)
+      // // getLabel
+      .get(baseURL+`/labels/${label.small}`)
+      .reply(200, mockLabel)
+      // createLabel
+      .post(baseURL+`/labels`)
+      .reply(201, mockLabel)
+      // addLabels
+      .post(baseURL+`/issues/${pull_number}/labels`)
+      .reply(200, [mockLabel])
+      // removeLabel M
+      .delete(baseURL+`/issues/${pull_number}/labels/${label.medium}`)
+      .reply(200)
+      // deleteLabel xsmall
+      .delete(baseURL+`/issues/${pull_number}/labels/${label.xsmall}`)
+      .reply(200)
+
     // Simulates delivery of an issues.opened webhook
-    await app.receive({
+    await probot.receive({
       name: 'pull_request.edited',
-      payload: pullRequestEditedPayload
+      payload: prEditedPayload
     })
-
-
-    expect(github.pullRequests.listFiles).toHaveBeenCalled()
-    expect(github.issues.removeLabel).toHaveBeenCalledTimes(2)
-    expect(github.issues.addLabels).toHaveBeenCalled()
-  })
-
-  test('doesnt remove size label if it is labelToAdd', async () => {
-    // Simulates delivery of an issues.opened webhook
-    await app.receive({
-      name: 'pull_request.edited',
-      payload: pullRequestLabelToAdd
-    })
-
-    expect(github.pullRequests.listFiles).toHaveBeenCalled()
-    // only called one time even though we have 2 labels
-    expect(github.issues.removeLabel).toHaveBeenCalledTimes(1)
-    expect(github.issues.addLabels).toHaveBeenCalled()
   })
 
   test('creates a label when a pull request is edited', async () => {
-    // Simulates delivery of an issues.opened webhook
-    await app.receive({
-      name: 'pull_request.edited',
-      payload: pullRequestEditedPayload
-    })
+    nock("https://api.github.com")
+      // listFiles
+      .get(baseURL+`/pulls/${pull_number}/files`)
+      .reply(200, mockListFiles)
+      // deleteLabel label/M
+      .delete(baseURL+`/issues/${pull_number}/labels/${label.medium}`)
+      .reply(200)
+      // deleteLabel label/S
+      .delete(baseURL+`/issues/${pull_number}/labels/${label.xsmall}`)
+      .reply(200)
+      // createLabel
+      .post(baseURL+`/labels`)
+      .reply(201, mockLabel)
+      // addLabels
+      .post(baseURL+`/issues/${pull_number}/labels`)
+      .reply(200, [label])
 
-    // This test passes if the code in your index.js file calls
-    // `context.github.issues.addLabels`
-    expect(github.pullRequests.listFiles).toHaveBeenCalled()
-    expect(github.issues.addLabels).toHaveBeenCalled()
+    // Simulates delivery of an issues.opened webhook
+    await probot.receive({
+      name: 'pull_request.edited',
+      payload: prEditedPayload
+    })
   })
 
   test('creates a label when a pull request is synchronized', async () => {
-    // Simulates delivery of an issues.opened webhook
-    await app.receive({
-      name: 'pull_request.synchronize',
-      payload: pullRequestSynchronizedPayload
-    })
+    nock("https://api.github.com")
+      // listFiles
+      .get(baseURL+`/pulls/${pull_number}/files`)
+      .reply(200, mockListFiles)
+      // createLabel
+      .post(baseURL+`/labels`)
+      .reply(201, mockLabel)
+      // addLabels
+      .post(baseURL+`/issues/${pull_number}/labels`)
+      .reply(200, [label])
 
-    // This test passes if the code in your index.js file calls
-    // `context.github.issues.addLabels`
-    expect(github.pullRequests.listFiles).toHaveBeenCalled()
-    expect(github.issues.addLabels).toHaveBeenCalled()
+    // Simulates delivery of an issues.opened webhook
+    await probot.receive({
+      name: 'pull_request.synchronize',
+      payload: prSynchronizedPayload
+    })
   })
+
+  afterEach(() => {
+    nock.cleanAll();
+    nock.enableNetConnect();
+  });
 })

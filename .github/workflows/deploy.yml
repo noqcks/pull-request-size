@@ -22,7 +22,7 @@ jobs:
         uses: serverless/github-action@master
         with:
           args: -c 'printenv | grep "PRIVATE_KEY\|APP_ID\|WEBHOOK_SECRET" > .env && serverless deploy --verbose && rm .env'
-          entrypoint: /bin/bash
+          entrypoint: /bin/sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

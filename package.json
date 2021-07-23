@@ -20,7 +20,7 @@
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "dependencies": {
-    "@noqcks/generated": "^1.0.0",
+    "@noqcks/generated": "^1.0.1",
     "@probot/adapter-aws-lambda-serverless": "^2.0.2",
     "@sentry/node": "^4.3.0",
     "minimatch": "^3.0.4",

@@ -46,25 +46,27 @@ const labels = {
  */
 function sizeLabel (lineCount, l) {
   if (lineCount < l.S.lines) {
-    return (l.XS.color, l.XS.name)
+    return [l.XS.color, l.XS.name]
   } else if (lineCount < l.M.lines) {
-    return (l.S.color, l.S.name)
+    return [l.S.color, l.S.name]
   } else if (lineCount < l.L.lines) {
-    return (l.M.color, l.M.name)
+    return [l.M.color, l.M.name]
   } else if (lineCount < l.XL.lines) {
-    return (l.L.color, l.L.name)
+    return [l.L.color, l.L.name]
   } else if (lineCount < l.XXL.lines) {
-    return (l.XL.color, l.XL.name)
+    return [l.XL.color, l.XL.name]
   }
-
-  return (l.XXL.color, l.XXL.name)
+  return [l.XXL.color, l.XXL.name]
 }
 
 /**
  * getSizes grabs size information from the .github/labels.yml file
  * so that each repository can define its own label sizes
+ * @param context The context of the PullRequest.
+ * @param owner The owner of the repository.
+ * @param repo The repository where the .gitattributes file is located.
  */
-async function getCustomLabels() {
+async function getCustomLabels(context, owner, repo) {
   const path = ".github/labels.yml"
 
   let response;
@@ -72,12 +74,12 @@ async function getCustomLabels() {
     response = await context.octokit.repos.getContent({owner, repo, path})
     const content = yaml.load(
       Buffer.from(response.data.content, 'base64').toString('utf-8'),
-      schema=JSON_SCHEMA,
+      schema="JSON_SCHEMA",
       json=true,
     );
     return {...labels, ...content}
   } catch (e) {
-    return
+    return labels
   }
 }
 
@@ -167,7 +169,7 @@ module.exports = app => {
 
     // get list of custom generated files as defined in .gitattributes
     const customGeneratedFiles = await getCustomGeneratedFiles(context, owner, repo)
-    const customLabels = await getCustomLabels();
+    const customLabels = await getCustomLabels(context, owner, repo);
 
     // list of files modified in the pull request
     const res = await context.octokit.pulls.listFiles({
@@ -192,7 +194,7 @@ module.exports = app => {
     pullRequest.labels.forEach(function(prLabel) {
       label_names = Object.keys(customLabels).map(key => customLabels[key]["name"])
       if(label_names.includes(prLabel.name)) {
-        if (prLabel.name != labelToAdd) {
+        if (prLabel.name != label) {
           context.octokit.issues.removeLabel(context.issue({
             name: prLabel.name
           }))

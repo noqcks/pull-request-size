@@ -1,3 +1,7 @@
+XS:
+  name: size/XS
+  lines: 0
+  color: FF2D00
 S:
   name: size/S
   lines: 10

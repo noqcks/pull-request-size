@@ -25,7 +25,7 @@ Pull Request Size calculates the size of a PR as
 total additions + total deletions - (all generated¹ file additions/deletions)
 ```
 
-¹ A generated file is either one of the standard generated files as defined in [noqcks/generated](https://github.com/noqcks/generated/blob/master/lib/generated.js) or defined with `linguist-generated=true` in a `.gitattributes` file. 
+¹ A generated file is either one of the standard generated files as defined in [noqcks/generated](https://github.com/noqcks/generated/blob/master/lib/generated.js) or defined with `linguist-generated=true` in a `.gitattributes` file.
 
 ## Excluding Files
 
@@ -37,7 +37,39 @@ For example to mark all `.meta` files as generated, add this line to `.gitattrib
 *.meta linguist-generated=true
 ```
 
-A `.gitattributes` file uses the same rules for matching as `.gitignore` files. See [GitHub documenation](https://docs.github.com/en/github/administering-a-repository/managing-repository-settings/customizing-how-changed-files-appear-on-github) on the linguist-generated flag for more info. 
+A `.gitattributes` file uses the same rules for matching as `.gitignore` files. See [GitHub documenation](https://docs.github.com/en/github/administering-a-repository/managing-repository-settings/customizing-how-changed-files-appear-on-github) on the linguist-generated flag for more info.
+
+
+## Custom Labels
+
+You can set custom label names and colors by checking in the file `.github/labels.yml` to every repository you'd like to customize
+
+```
+XS:
+  name: size/XS
+  lines: 0
+  color: 3CBF00
+S:
+  name: size/S
+  lines: 10
+  color: 5D9801
+M:
+  name: size/M
+  lines: 30
+  color: 7F7203
+L:
+  name: size/L
+  lines: 100
+  color: A14C05
+XL:
+  name: size/XL
+  lines: 500
+  color: C32607
+XXL:
+  name: size/XXL
+  lines: 1000
+  color: E50009
+```
 
 ## Setup
 

@@ -1,12 +1,25 @@
 # Pull Request Size
 
-[![Build Status](https://travis-ci.org/noqcks/pull-request-size.svg?branch=master)](https://travis-ci.org/noqcks/pull-request-size) | [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Pull Request Size is a GitHub App that applies `size/*` labels to Pull Requests based on the total lines of code changed (additions and deletions).
 
 <img width="767" alt="screen shot 2018-11-01 at 10 42 27 am" src="https://user-images.githubusercontent.com/4740147/47858607-d7e05f80-ddc2-11e8-97d9-247033cc9a12.png">
 
-Configure Pull Request Size for your organization on the [GitHub app page](https://github.com/apps/pull-request-size).
+
+## Install
+
+👉 **Install via [GitHub marketplace](https://github.com/apps/pull-request-size)** 🌟
+
+---
+
+If you'd like to host it yourself, see the Github docs on [how to create a GitHub application](https://docs.github.com/en/developers/apps/building-github-apps/creating-a-github-app).
+
+If hosting yourself, you'll need the app to request these permissions:
+
+_Repository Permisions_: metadata:read-only, pull-request:read-write, single-file:read (.gitattributes, .github/labels.yml)
+
+_Subscribe to events_: Pull Requests
 
 ## Sizing
 

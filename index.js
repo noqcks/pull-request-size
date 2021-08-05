@@ -2,56 +2,86 @@ const Sentry = require('@sentry/node');
 Sentry.init({ dsn: process.env.SENTRY_DSN });
 const generated = require('@noqcks/generated');
 const minimatch = require("minimatch")
+const yaml = require('js-yaml');
 
-const label = {
-  XS: 'size/XS',
-  S: 'size/S',
-  M: 'size/M',
-  L: 'size/L',
-  XL: 'size/XL',
-  XXL: 'size/XXL'
+const labels = {
+  XS: {
+    name: 'size/XS',
+    lines: 0,
+    color: '3CBF00',
+  },
+  S: {
+    name: 'size/S',
+    lines: 10,
+    color: '5D9801',
+  },
+  M: {
+    name: 'size/M',
+    lines: 30,
+    color: '7F7203',
+  },
+  L: {
+    name: 'size/L',
+    lines: 100,
+    color: 'A14C05',
+  },
+  XL: {
+    name: 'size/XL',
+    lines: 500,
+    color: 'C32607',
+  },
+  XXL: {
+    name: 'size/XXL',
+    lines: 1000,
+    color: 'E50009',
+  }
 }
-
-const colors = {
-  'size/XS': '3CBF00',
-  'size/S': '5D9801',
-  'size/M': '7F7203',
-  'size/L': 'A14C05',
-  'size/XL': 'C32607',
-  'size/XXL': 'E50009'
-}
-
-const sizes = {
-  S: 10,
-  M: 30,
-  L: 100,
-  Xl: 500,
-  Xxl: 1000
-}
-
 
 /**
  * sizeLabel will return a string label that can be assigned to a
  * GitHub Pull Request. The label is determined by the lines of code
  * in the Pull Request.
  * @param lineCount The number of lines in the Pull Request.
+ * @param l The label object
  */
-function sizeLabel (lineCount) {
-  if (lineCount < sizes.S) {
-    return label.XS
-  } else if (lineCount < sizes.M) {
-    return label.S
-  } else if (lineCount < sizes.L) {
-    return label.M
-  } else if (lineCount < sizes.Xl) {
-    return label.L
-  } else if (lineCount < sizes.Xxl) {
-    return label.XL
+function sizeLabel (lineCount, l) {
+  if (lineCount < l.S.lines) {
+    return [l.XS.color, l.XS.name]
+  } else if (lineCount < l.M.lines) {
+    return [l.S.color, l.S.name]
+  } else if (lineCount < l.L.lines) {
+    return [l.M.color, l.M.name]
+  } else if (lineCount < l.XL.lines) {
+    return [l.L.color, l.L.name]
+  } else if (lineCount < l.XXL.lines) {
+    return [l.XL.color, l.XL.name]
   }
-
-  return label.XXL
+  return [l.XXL.color, l.XXL.name]
 }
 
+/**
+ * getSizes grabs size information from the .github/labels.yml file
+ * so that each repository can define its own label sizes
+ * @param context The context of the PullRequest.
+ * @param owner The owner of the repository.
+ * @param repo The repository where the .gitattributes file is located.
+ */
+async function getCustomLabels(context, owner, repo) {
+  const path = ".github/labels.yml"
+
+  let response;
+  try {
+    response = await context.octokit.repos.getContent({owner, repo, path})
+    const content = yaml.load(
+      Buffer.from(response.data.content, 'base64').toString('utf-8'),
+      schema="JSON_SCHEMA",
+      json=true,
+    );
+    return {...labels, ...content}
+  } catch (e) {
+    return labels
+  }
+}
 
 /**
  * getCustomGeneratedFiles will grab a list of file globs that determine
@@ -139,6 +169,7 @@ module.exports = app => {
 
     // get list of custom generated files as defined in .gitattributes
     const customGeneratedFiles = await getCustomGeneratedFiles(context, owner, repo)
+    const customLabels = await getCustomLabels(context, owner, repo);
 
     // list of files modified in the pull request
     const res = await context.octokit.pulls.listFiles({
@@ -149,7 +180,7 @@ module.exports = app => {
 
     // if files are generated, remove them from the additions/deletions total
     res.data.forEach(function(item) {
-      var g = new generated(item.filename, item.patch)
+      let g = new generated(item.filename, item.patch)
       if (globMatch(item.filename, customGeneratedFiles) || g.isGenerated()) {
         additions -= item.additions
         deletions -= item.deletions
@@ -157,12 +188,13 @@ module.exports = app => {
     })
 
     // calculate GitHub label
-    var labelToAdd = sizeLabel(additions + deletions)
+    let [labelColor, label] = sizeLabel(additions + deletions, customLabels)
 
     // remove existing size/<size> label if it exists and is not labelToAdd
     pullRequest.labels.forEach(function(prLabel) {
-      if(Object.values(label).includes(prLabel.name)) {
-        if (prLabel.name != labelToAdd) {
+      label_names = Object.keys(customLabels).map(key => customLabels[key]["name"])
+      if(label_names.includes(prLabel.name)) {
+        if (prLabel.name != label) {
           context.octokit.issues.removeLabel(context.issue({
             name: prLabel.name
           }))
@@ -171,7 +203,7 @@ module.exports = app => {
     })
 
     // assign GitHub label
-    return await addLabel(context, labelToAdd, colors[labelToAdd])
+    return await addLabel(context, label, labelColor)
   })
 
   // we don't care about marketplace events

@@ -2,7 +2,6 @@ const Sentry = require('@sentry/node');
 Sentry.init({ dsn: process.env.SENTRY_DSN });
 const generated = require('@noqcks/generated');
 const minimatch = require("minimatch")
-const yaml = require('js-yaml');
 
 const labels = {
   XS: {
@@ -57,30 +56,6 @@ function sizeLabel (lineCount, l) {
     return [l.XL.color, l.XL.name]
   }
   return [l.XXL.color, l.XXL.name]
-}
-
-/**
- * getSizes grabs size information from the .github/labels.yml file
- * so that each repository can define its own label sizes
- * @param context The context of the PullRequest.
- * @param owner The owner of the repository.
- * @param repo The repository where the .gitattributes file is located.
- */
-async function getCustomLabels(context, owner, repo) {
-  const path = ".github/labels.yml"
-
-  let response;
-  try {
-    response = await context.octokit.repos.getContent({owner, repo, path})
-    const content = yaml.load(
-      Buffer.from(response.data.content, 'base64').toString('utf-8'),
-      schema="JSON_SCHEMA",
-      json=true,
-    );
-    return {...labels, ...content}
-  } catch (e) {
-    return labels
-  }
 }
 
 /**
@@ -169,7 +144,7 @@ module.exports = app => {
 
     // get list of custom generated files as defined in .gitattributes
     const customGeneratedFiles = await getCustomGeneratedFiles(context, owner, repo)
-    const customLabels = await getCustomLabels(context, owner, repo);
+    const customLabels = await context.config('labels.yml', labels)
 
     // list of files modified in the pull request
     const res = await context.octokit.pulls.listFiles({

@@ -1,5 +1,4 @@
 const { Probot, ProbotOctokit } = require("probot");
-const expect = require('expect')
 const myProbotApp = require('..')
 const nock = require("nock");
 

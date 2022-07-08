@@ -21,20 +21,20 @@
   },
   "dependencies": {
     "@noqcks/generated": "^1.0.1",
-    "@probot/adapter-aws-lambda-serverless": "^2.0.2",
+    "@probot/adapter-aws-lambda-serverless": "^3.0.1",
     "@sentry/node": "^4.3.0",
-    "minimatch": "^3.0.4",
-    "probot": "^11.0.6"
+    "minimatch": "^5.1.0",
+    "probot": "^12.2.5"
   },
   "devDependencies": {
-    "jest": "^24.1.0",
-    "nock": "^10.0.0",
-    "nodemon": "^1.18.7",
-    "smee-client": "^1.0.2",
-    "standard": "^10.0.3"
+    "jest": "^28.1.2",
+    "nock": "^13.2.8",
+    "nodemon": "^2.0.19",
+    "smee-client": "^1.2.3",
+    "standard": "^17.0.0"
   },
   "engines": {
-    "node": ">= 8.3.0"
+    "node": ">= 18.0.0"
   },
   "standard": {
     "env": [

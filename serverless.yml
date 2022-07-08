@@ -1,11 +1,10 @@
 service: pull-request-size
-frameworkVersion: '2'
+frameworkVersion: '3'
 useDotenv: true
 
 provider:
   name: aws
-  runtime: nodejs18.x
-  lambdaHashingVersion: 20201221
+  runtime: nodejs16.x
   environment:
     APP_ID: ${env:APP_ID}
     PRIVATE_KEY: ${env:PRIVATE_KEY}

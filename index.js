@@ -146,15 +146,19 @@ module.exports = app => {
     const customGeneratedFiles = await getCustomGeneratedFiles(context, owner, repo)
     const customLabels = await context.config('labels.yml', labels)
 
-    // list of files modified in the pull request
-    const res = await context.octokit.pulls.listFiles({
+    // grab all pages
+    const files = await context.octokit.paginate(
+      context.octokit.pulls.listFiles,
+      {
       owner: owner,
       repo: repo,
       pull_number: number,
-    })
+        per_page: 100,
+      }
+    );
 
     // if files are generated, remove them from the additions/deletions total
-    res.data.forEach(function(item) {
+    files.forEach(function(item) {
       let g = new generated(item.filename, item.patch)
       if (globMatch(item.filename, customGeneratedFiles) || g.isGenerated()) {
         additions -= item.additions

@@ -30,4 +30,4 @@ I may update this privacy policy from time to time. Thus, you are advised to rev
 
 ## Contact me
 
-If you have any questions or suggestions about my Privacy Policy, do not hesitate to contact me at `benny@noqcks.io`.
+If you have any questions or suggestions about my Privacy Policy, do not hesitate to contact me at `benji@093b.org`.

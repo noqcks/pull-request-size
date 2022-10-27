@@ -28,6 +28,8 @@
     "serverless": "^3.20.0"
   },
   "devDependencies": {
+    "eslint": "^8.26.0",
+    "eslint-config-google": "^0.14.0",
     "jest": "^28.1.2",
     "nock": "^13.2.8",
     "nodemon": "^2.0.19",

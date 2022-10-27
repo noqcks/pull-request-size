@@ -42,13 +42,13 @@ const labels = {
 function generateSizeLabel(lineCount, l) {
   if (lineCount < l.S.lines) {
     return [l.XS.color, l.XS.name];
-  } else if (lineCount < l.M.lines) {
+  } if (lineCount < l.M.lines) {
     return [l.S.color, l.S.name];
-  } else if (lineCount < l.L.lines) {
+  } if (lineCount < l.L.lines) {
     return [l.M.color, l.M.name];
-  } else if (lineCount < l.XL.lines) {
+  } if (lineCount < l.XL.lines) {
     return [l.L.color, l.L.name];
-  } else if (lineCount < l.XXL.lines) {
+  } if (lineCount < l.XXL.lines) {
     return [l.XL.color, l.XL.name];
   }
   return [l.XXL.color, l.XXL.name];

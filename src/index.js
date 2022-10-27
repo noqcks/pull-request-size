@@ -1,7 +1,16 @@
 const Sentry = require('@sentry/node');
-const MarketplacePurchase = require('./src/webhooks/marketplace-purchase');
+const MarketplacePurchase = require('./webhooks/marketplace-purchase');
 const github = require('./github');
 const labels = require('./labels');
+
+function configureSentry(app) {
+  if (process.env.SENTRY_DSN) {
+    app.log('Setting up Sentry.io logging...');
+    Sentry.init({ dsn: process.env.SENTRY_DSN });
+  } else {
+    app.log('Skipping Sentry.io setup');
+  }
+}
 
 module.exports = (app) => {
   configureSentry(app);
@@ -31,19 +40,10 @@ module.exports = (app) => {
 
       const [labelColor, label] = labels.generateSizeLabel(additions + deletions, customLabels);
       // remove existing size/<size> label if it exists and is not the label to add
-      await removeExistingLabels(ctx, pullRequest, label);
+      await github.removeExistingLabels(ctx, pullRequest, label, customLabels);
 
       // assign GitHub label
-      return await addLabel(ctx, label, labelColor);
+      await github.addLabel(ctx, label, labelColor);
     }
   });
 };
-
-function configureSentry(app) {
-  if (process.env.SENTRY_DSN) {
-    app.log('Setting up Sentry.io logging...');
-    Sentry.init({dsn: process.env.SENTRY_DSN});
-  } else {
-    app.log('Skipping Sentry.io setup');
-  }
-}

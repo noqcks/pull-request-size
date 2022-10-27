@@ -21,7 +21,7 @@ async function isProPlan(app, ctx) {
     const res = await ctx.octokit.apps.getSubscriptionPlanForAccount({ account_id: id });
     const purchase = res.data.marketplace_purchase;
 
-    // # TODO(benji): finds the price model for free plan
+    // # TODO(benji): validate that this is correct
     if (purchase.plan.price_model === 'FREE') {
       app.log('Found Free plan');
       return false;

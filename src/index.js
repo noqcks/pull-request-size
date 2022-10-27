@@ -34,12 +34,11 @@ module.exports = (app) => {
       const pullRequest = ctx.payload.pull_request;
       const [additions, deletions] = await github.getAdditionsAndDeletions(ctx, pullRequest);
 
-      // calculate GitHub label
-      // TODO(benji): do we need to do some file validation here?
+      // custom labels stored in .github/labels.yml
       const customLabels = await ctx.config('labels.yml', labels.labels);
 
       const [labelColor, label] = labels.generateSizeLabel(additions + deletions, customLabels);
-      // remove existing size/<size> label if it exists and is not the label to add
+      // remove any existing size label if it exists and is not the label to add
       await github.removeExistingLabels(ctx, pullRequest, label, customLabels);
 
       // assign GitHub label

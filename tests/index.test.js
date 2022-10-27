@@ -50,8 +50,6 @@ test('remove existing size labels', async () => {
   helpers.nockRemoveLabelWithSize('medium');
   helpers.nockRemoveLabelWithSize('xsmall');
 
-  // TODO(benji): make sure other labels still exist
-
   // Simulates delivery of an pull_request.edited webhook
   // with two size labels already present on the PR
   // (size/M and size/XS)

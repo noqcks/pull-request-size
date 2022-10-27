@@ -83,7 +83,6 @@ async function getCustomGeneratedFiles(ctx, owner, repo) {
   return files;
 }
 
-// TODO(benji): does this remove ALL labels? Or just the pull request size labels?
 async function removeExistingLabels(ctx, pullRequest, label, customLabels) {
   pullRequest.labels.forEach((prLabel) => {
     const labelNames = Object.keys(customLabels).map((key) => customLabels[key].name);

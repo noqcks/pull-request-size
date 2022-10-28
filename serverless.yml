@@ -11,6 +11,7 @@ provider:
     WEBHOOK_SECRET: ${env:WEBHOOK_SECRET}
     NODE_ENV: production
     LOG_LEVEL: debug
+    SENTRY_DSN: https://23424225e28549ae9099f405a731d1a7@o392807.ingest.sentry.io/4504062891982848
 
 functions:
   webhooks:

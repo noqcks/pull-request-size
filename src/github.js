@@ -76,7 +76,6 @@ async function addLabel(ctx, name, color) {
 
 async function getCustomGeneratedFiles(ctx, owner, repo) {
   const files = [];
-  // TODO(benji): add tests for .gitattributes
   const path = '.gitattributes';
 
   let response;

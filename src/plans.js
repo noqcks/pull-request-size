@@ -3,7 +3,7 @@ const context = require('./context');
 const PRO_PLAN_INTRODUCTION_DATE = new Date('2022-10-27T00:00:00.000Z');
 
 function freeProSubscription(login) {
-  const organizations = ['093b'];
+  const organizations = [];
   const match = organizations.find((o) => o.toLowerCase() === String(login).toLowerCase());
   return match !== undefined;
 }

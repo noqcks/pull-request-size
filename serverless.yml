@@ -1,4 +1,4 @@
-service: pull-request-size
+service: pr-size
 frameworkVersion: '3'
 useDotenv: true
 
@@ -14,9 +14,16 @@ provider:
 
 functions:
   webhooks:
-    name: pull-request-size
-    handler: handler.webhooks
+    name: pr-size
+    handler: src/handler.webhooks
     events:
       - httpApi:
           path: /api/github/webhooks
           method: post
+
+package:
+  patterns:
+    - '!tests/**'
+    - '!coverage/**'
+    - '!.github/**'
+    - '!*.pem'

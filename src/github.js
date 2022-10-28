@@ -110,21 +110,31 @@ async function removeExistingLabels(ctx, label, customLabels) {
 }
 
 async function getAdditionsAndDeletions(ctx) {
+  // setting an arbitrary maximum upper limit at 1000 files changed
+  const maxFiles = 1000;
+  let fileCount = 0;
+
   const { number } = ctx.payload.pull_request;
   const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
   let { additions, deletions } = ctx.payload.pull_request;
+
   // grab all pages for files modified in the pull request
   const files = await getPullRequestFiles(ctx, owner, repo, number);
   // get list of custom generated files as defined in .gitattributes
   const customGeneratedFiles = await getCustomGeneratedFiles(ctx, owner, repo);
 
-  files.forEach((item) => {
-    const g = new Generated(item.filename, item.patch);
-    // if files are generated, remove them from the additions/deletions total
-    if (utils.globMatch(item.filename, customGeneratedFiles) || g.isGenerated()) {
-      additions -= item.additions;
-      deletions -= item.deletions;
+  files.every((file) => {
+    if (fileCount >= maxFiles) {
+      return false;
     }
+    const g = new Generated(file.filename, file.patch);
+    // if files are generated, remove them from the additions/deletions total
+    if (utils.globMatch(file.filename, customGeneratedFiles) || g.isGenerated()) {
+      additions -= file.additions;
+      deletions -= file.deletions;
+    }
+    fileCount += 1;
+    return true;
   });
   return [additions, deletions];
 }

@@ -2,7 +2,7 @@
   "name": "size",
   "version": "1.1.0",
   "description": "Applies size labels to Pull Requests",
-  "author": "Benji Visser <benny@noqcks.io>",
+  "author": "Benji Visser <benji@093b.org>",
   "license": "MIT",
   "repository": "https://github.com/noqcks/size.git",
   "homepage": "https://github.com/noqcks/size",
@@ -16,7 +16,8 @@
     "dev": "nodemon",
     "start": "probot run ./index.js",
     "lint": "standard --fix",
-    "test": "jest ",
+    "test": "jest",
+    "coverage": "jest --collect-coverage",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "dependencies": {
@@ -54,6 +55,13 @@
     ]
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 70,
+        "lines": 70
+      }
+    }
   }
 }

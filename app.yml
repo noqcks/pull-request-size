@@ -25,10 +25,15 @@ default_permissions:
   # https://developer.github.com/v3/apps/permissions/#permission-on-pull-requests
   pull_requests: write
 
+  # Issues and related comments, assignees, labels, and milestones.
+  # https://developer.github.com/v3/apps/permissions/#permission-on-issues
+  issues: write
+
   # Search repositories, list collaborators, and access repository metadata.
   # https://developer.github.com/v3/apps/permissions/#metadata-permissions
   metadata: read
 
+  # read .gitattributes for custom generated files
   single_file: read
 
 single_file_name: ".gitattributes"

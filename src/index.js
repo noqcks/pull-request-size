@@ -31,15 +31,14 @@ module.exports = (app) => {
     'pull_request.edited',
   ], async (ctx) => {
     if (await github.hasValidSubscriptionForRepo(app, ctx)) {
-      const pullRequest = ctx.payload.pull_request;
-      const [additions, deletions] = await github.getAdditionsAndDeletions(ctx, pullRequest);
+      const [additions, deletions] = await github.getAdditionsAndDeletions(ctx);
 
       // custom labels stored in .github/labels.yml
       const customLabels = await ctx.config('labels.yml', labels.labels);
 
       const [labelColor, label] = labels.generateSizeLabel(additions + deletions, customLabels);
       // remove any existing size label if it exists and is not the label to add
-      await github.removeExistingLabels(ctx, pullRequest, label, customLabels);
+      await github.removeExistingLabels(ctx, label, customLabels);
 
       // assign GitHub label
       await github.addLabel(ctx, label, labelColor);

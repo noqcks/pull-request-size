@@ -83,8 +83,8 @@ async function getCustomGeneratedFiles(ctx, owner, repo) {
   return files;
 }
 
-async function removeExistingLabels(ctx, pullRequest, label, customLabels) {
-  pullRequest.labels.forEach((prLabel) => {
+async function removeExistingLabels(ctx, label, customLabels) {
+  ctx.payload.pull_request.labels.forEach((prLabel) => {
     const labelNames = Object.keys(customLabels).map((key) => customLabels[key].name);
     if (labelNames.includes(prLabel.name)) {
       if (prLabel.name !== label) {
@@ -96,10 +96,10 @@ async function removeExistingLabels(ctx, pullRequest, label, customLabels) {
   });
 }
 
-async function getAdditionsAndDeletions(ctx, pullRequest) {
-  const { number } = pullRequest;
-  const { owner: { login: owner }, name: repo } = pullRequest.base.repo;
-  let { additions, deletions } = pullRequest;
+async function getAdditionsAndDeletions(ctx) {
+  const { number } = ctx.payload.pull_request;
+  const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
+  let { additions, deletions } = ctx.payload.pull_request;
   // grab all pages for files modified in the pull request
   const files = await getPullRequestFiles(ctx, owner, repo, number);
   // get list of custom generated files as defined in .gitattributes

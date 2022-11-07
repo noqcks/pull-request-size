@@ -33,8 +33,14 @@ module.exports = (app) => {
     if (await github.hasValidSubscriptionForRepo(app, ctx)) {
       const [additions, deletions] = await github.getAdditionsAndDeletions(ctx);
 
-      // custom labels stored in .github/labels.yml
-      const customLabels = await ctx.config('labels.yml', labels.labels);
+      let customLabels;
+      try {
+        // custom labels stored in .github/labels.yml
+        customLabels = await ctx.config('labels.yml', labels.labels);
+      } catch (err) {
+        // catch error if the user hasn't granted permissions to this file yet
+        customLabels = labels.labels;
+      }
 
       const [labelColor, label] = labels.generateSizeLabel(additions + deletions, customLabels);
       // remove any existing size label if it exists and is not the label to add

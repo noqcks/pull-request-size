@@ -22,10 +22,15 @@ function blockedAccount(ctx) {
   }
 }
 
+function changedFiles(ctx) {
+  return ctx.payload.pull_request.changed_files;
+}
+
 module.exports = {
   getRepoOwnerLogin,
   getRepoOwnerId,
   getPullRequest,
   isPrivateOrgRepo,
   blockedAccount,
+  changedFiles,
 };

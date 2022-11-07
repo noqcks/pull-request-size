@@ -30,16 +30,18 @@ async function addBuyProComment(ctx) {
 }
 
 async function hasValidSubscriptionForRepo(app, ctx) {
-  if (context.isPrivateOrgRepo(ctx)) {
-    const isProPlan = await plans.isProPlan(app, ctx);
-    if (!isProPlan) {
-      await addBuyProComment(ctx);
-      app.log('Added comment to buy Pro Plan');
-      return false;
-    }
-    return true;
-  }
-  return true;
+  return true
+  // TODO(benji): remove once we have a paid plan
+  // if (context.isPrivateOrgRepo(ctx)) {
+  //   const isProPlan = await plans.isProPlan(app, ctx);
+  //   if (!isProPlan) {
+  //     await addBuyProComment(ctx);
+  //     app.log('Added comment to buy Pro Plan');
+  //     return false;
+  //   }
+  //   return true;
+  // }
+  // return true;
 }
 
 async function getPullRequestFiles(ctx, owner, repo, number) {

@@ -1,3 +1,5 @@
+org: noqcks
+app: pr-size
 service: pr-size
 frameworkVersion: '3'
 useDotenv: true

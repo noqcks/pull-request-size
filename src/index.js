@@ -1,7 +1,9 @@
 const Sentry = require('@sentry/node');
 const MarketplacePurchase = require('./webhooks/marketplace-purchase');
 const github = require('./github');
+const context = require('./context');
 const labels = require('./labels');
+const { prepareFramesForEvent } = require('@sentry/node/dist/parsers');
 
 function configureSentry(app) {
   if (process.env.SENTRY_DSN) {
@@ -30,6 +32,10 @@ module.exports = (app) => {
     'pull_request.synchronize',
     'pull_request.edited',
   ], async (ctx) => {
+    if (context.blockedAccount(ctx)) {
+      return;
+    }
+
     if (await github.hasValidSubscriptionForRepo(app, ctx)) {
       const [additions, deletions] = await github.getAdditionsAndDeletions(ctx);
 

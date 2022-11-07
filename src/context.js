@@ -15,9 +15,17 @@ function isPrivateOrgRepo(ctx) {
   return repository.private && repository.owner.type === 'Organization';
 }
 
+function blockedAccount(ctx) {
+  const blockedAccounts = ["stevenans9859"]
+  if (blockedAccounts.includes(getRepoOwnerLogin(ctx))) {
+    return true;
+  }
+}
+
 module.exports = {
   getRepoOwnerLogin,
   getRepoOwnerId,
   getPullRequest,
   isPrivateOrgRepo,
+  blockedAccount,
 };

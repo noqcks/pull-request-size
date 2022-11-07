@@ -3,7 +3,6 @@ const MarketplacePurchase = require('./webhooks/marketplace-purchase');
 const github = require('./github');
 const context = require('./context');
 const labels = require('./labels');
-const { prepareFramesForEvent } = require('@sentry/node/dist/parsers');
 
 const MAX_FILES = 1000;
 

@@ -20,6 +20,7 @@ functions:
     name: pr-size
     handler: src/handler.webhooks
     memorySize: 512
+    provisionedConcurrency: 1
     events:
       - httpApi:
           path: /api/github/webhooks

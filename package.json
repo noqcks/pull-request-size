@@ -16,7 +16,7 @@
     "dev": "nodemon",
     "start": "probot run ./src/index.js",
     "lint": "standard --fix",
-    "test": "jest",
+    "test": "jest"
   },
   "dependencies": {
     "@noqcks/generated": "^7.23.0",

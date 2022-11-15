@@ -16,10 +16,11 @@ function isPrivateOrgRepo(ctx) {
 }
 
 function blockedAccount(ctx) {
-  const blockedAccounts = ["stevenans9859"]
+  const blockedAccounts = ['stevenans9859'];
   if (blockedAccounts.includes(getRepoOwnerLogin(ctx))) {
     return true;
   }
+  return false;
 }
 
 function changedFiles(ctx) {

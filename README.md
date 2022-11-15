@@ -1,6 +1,8 @@
 # Pull Request Size
 
-<img src="static/logo.png" alt="drawing" width="150"/>
+<img src="static/logo.png" alt="drawing" width="125"/>
+<br />
+<br />
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Sentry](https://img.shields.io/badge/sentry-enabled-green)](https://sentry.io) [![Build Status](https://github.com/noqcks/pull-request-size/workflows/Test/badge.svg)](https://github.com/noqcks/pull-request-size/actions) [![codecov](https://codecov.io/gh/noqcks/pull-request-size/branch/master/graph/badge.svg?token=qw3AMD6G8H)](https://codecov.io/gh/noqcks/pull-request-size) [![Dependabot](https://badgen.net/badge/Dependabot/enabled/green?icon=dependabot)](https://dependabot.com/)
 
@@ -82,6 +84,10 @@ XXL:
   lines: 1000
   color: E50009
 ```
+
+## Feedback, suggestions and bug reports
+
+Please create an issue here: https://github.com/noqcks/pull-request-size/issues
 
 ## License
 

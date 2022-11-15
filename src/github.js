@@ -4,7 +4,9 @@ const plans = require('./plans');
 const utils = require('./utils');
 
 const buyComment = 'Hi there :wave:\n\nUsing this App for a private organization repository requires a paid '
-  + 'subscription that you can buy on the [GitHub Marketplace](https://github.com/marketplace/pull-request-size/)\n\n'
+  + 'subscription. \n\n'
+  + 'You can click `Edit your plan` on the Pull Request Size '
+  + '[GitHub Marketplace listing](https://github.com/marketplace/pull-request-size/) to upgrade.\n\n'
   + 'If you are a non-profit organization or otherwise can not pay for such a plan, contact me by '
   + '[creating an issue](https://github.com/noqcks/pull-request-size/issues)';
 

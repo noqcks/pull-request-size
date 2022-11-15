@@ -1,0 +1,49 @@
+{
+  "id": 16002239,
+  "account": {
+    "login": "pull-request-size",
+    "id": 79683951,
+    "node_id": "MDEyOk9yZ2FuaXphdGlvbjc5NjgzOTUx",
+    "avatar_url": "https://avatars.githubusercontent.com/u/79683951?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/pull-request-size",
+    "html_url": "https://github.com/pull-request-size",
+    "followers_url": "https://api.github.com/users/pull-request-size/followers",
+    "following_url": "https://api.github.com/users/pull-request-size/following{/other_user}",
+    "gists_url": "https://api.github.com/users/pull-request-size/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/pull-request-size/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/pull-request-size/subscriptions",
+    "organizations_url": "https://api.github.com/users/pull-request-size/orgs",
+    "repos_url": "https://api.github.com/users/pull-request-size/repos",
+    "events_url": "https://api.github.com/users/pull-request-size/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/pull-request-size/received_events",
+    "type": "Organization",
+    "site_admin": false
+  },
+  "repository_selection": "selected",
+  "access_tokens_url": "https://api.github.com/app/installations/698235/access_tokens",
+  "repositories_url": "https://api.github.com/installation/repositories",
+  "html_url": "https://github.com/organizations/pull-request-size/settings/installations/16002239",
+  "app_id": 106910,
+  "app_slug": "pull-request-size-dev",
+  "target_id": 79683951,
+  "target_type": "Organization",
+  "permissions": {
+    "issues": "write",
+    "contents": "write",
+    "metadata": "read",
+    "pull_requests": "write"
+  },
+  "events": [
+    "issues",
+    "issue_comment",
+    "pull_request"
+  ],
+  "created_at": "2021-04-05T19:51:53.000Z",
+  "updated_at": "2021-04-05T19:51:53.000Z",
+  "single_file_name": null,
+  "has_multiple_single_files": false,
+  "single_file_paths": [],
+  "suspended_by": null,
+  "suspended_at": null
+}

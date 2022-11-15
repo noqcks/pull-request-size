@@ -100,5 +100,5 @@ npm start
 
 ## License
 
-[MIT](LICENSE) © 2021 Benji Visser <benji@093b.org>
+[MIT](LICENSE) © 2022 Benji Visser <benji@093b.org>
 

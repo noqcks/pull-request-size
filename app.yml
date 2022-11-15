@@ -29,6 +29,7 @@ default_permissions:
   # https://developer.github.com/v3/apps/permissions/#metadata-permissions
   metadata: read
 
+  # read .gitattributes for custom generated files
   single_file: read
 
 single_file_name: ".gitattributes"

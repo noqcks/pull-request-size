@@ -1,4 +1,6 @@
-service: pull-request-size
+org: noqcks
+app: pr-size
+service: pr-size
 frameworkVersion: '3'
 useDotenv: true
 
@@ -11,12 +13,22 @@ provider:
     WEBHOOK_SECRET: ${env:WEBHOOK_SECRET}
     NODE_ENV: production
     LOG_LEVEL: debug
+    SENTRY_DSN: https://23424225e28549ae9099f405a731d1a7@o392807.ingest.sentry.io/4504062891982848
 
 functions:
   webhooks:
-    name: pull-request-size
-    handler: handler.webhooks
+    name: pr-size
+    handler: src/handler.webhooks
+    memorySize: 256
+    provisionedConcurrency: 1
     events:
       - httpApi:
           path: /api/github/webhooks
           method: post
+
+package:
+  patterns:
+    - '!tests/**'
+    - '!coverage/**'
+    - '!.github/**'
+    - '!*.pem'

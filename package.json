@@ -2,7 +2,7 @@
   "name": "size",
   "version": "1.1.0",
   "description": "Applies size labels to Pull Requests",
-  "author": "Benji Visser <benny@noqcks.io>",
+  "author": "Benji Visser <benji@093b.org>",
   "license": "MIT",
   "repository": "https://github.com/noqcks/size.git",
   "homepage": "https://github.com/noqcks/size",
@@ -14,20 +14,25 @@
   ],
   "scripts": {
     "dev": "nodemon",
-    "start": "probot run ./index.js",
+    "start": "probot run ./src/index.js",
     "lint": "standard --fix",
-    "test": "jest ",
+    "test": "jest",
+    "coverage": "jest --collect-coverage",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "dependencies": {
-    "@noqcks/generated": "^1.0.1",
+    "@noqcks/generated": "^7.23.0",
     "@probot/adapter-aws-lambda-serverless": "^3.0.1",
-    "@sentry/node": "^4.3.0",
+    "@sentry/node": "^7.17.2",
     "minimatch": "^5.1.0",
     "probot": "^12.2.5",
     "serverless": "^3.20.0"
   },
   "devDependencies": {
+    "eslint": "^8.26.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.26.0",
     "jest": "^28.1.2",
     "nock": "^13.2.8",
     "nodemon": "^2.0.19",
@@ -50,6 +55,13 @@
     ]
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 70,
+        "lines": 70
+      }
+    }
   }
 }

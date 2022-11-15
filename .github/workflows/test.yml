@@ -14,9 +14,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: npm
-      - uses: codecov/codecov-action@v3
       - run: npm install -g codecov
       - run: npm ci
       - run: npm test
-      - run: codecov
+      - uses: codecov/codecov-action@v3
 

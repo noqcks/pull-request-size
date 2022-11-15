@@ -9,11 +9,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           cache: npm
+      - run: npm install -g codecov
       - run: npm ci
       - run: npm test
+      - run: codecov
+

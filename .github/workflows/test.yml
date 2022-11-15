@@ -14,8 +14,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: npm
-      - run: npm install -g codecov
       - run: npm ci
       - run: npm test
       - uses: codecov/codecov-action@v3
-
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

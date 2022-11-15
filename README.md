@@ -1,6 +1,11 @@
 # Pull Request Size
 
+<img src="static/logo.png" alt="drawing" width="150"/>
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Sentry](https://img.shields.io/badge/sentry-enabled-green)](https://sentry.io)
+[![Build Status](https://github.com/noqcks/pull-request-size/workflows/Test/badge.svg)](https://github.com/noqcks/pull-request-size/actions)
+[![Dependabot](https://badgen.net/badge/Dependabot/enabled/green?icon=dependabot)](https://dependabot.com/)
 
 Pull Request Size is a GitHub App that applies `size/*` labels to Pull Requests based on the total lines of code changed (additions and deletions).
 

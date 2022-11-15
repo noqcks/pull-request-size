@@ -36,6 +36,9 @@ total additions + total deletions - (all generated¹ file additions/deletions)
 
 
 ## Configuration
+
+This app requires no configuration out of the box. However, you can exclude certain files
+from being counted towards a PR's size, and you can add custom labels in Github.
 ### Excluding Files
 
 If you have files that you would not like to be included in the calculation for a Pull Request's size, you can modify the `.gitattributes` file with the flag `linguist-generated=true` on your file or file pattern.

@@ -16,9 +16,7 @@
     "dev": "nodemon",
     "start": "probot run ./src/index.js",
     "lint": "standard --fix",
-    "test": "jest",
-    "coverage": "jest --collect-coverage",
-    "test:watch": "jest --watch --notify --notifyMode=change --coverage"
+    "test": "jest"
   },
   "dependencies": {
     "@noqcks/generated": "^7.23.0",
@@ -55,7 +53,9 @@
     ]
   },
   "jest": {
+    "coverageDirectory": "./coverage/",
     "testEnvironment": "node",
+    "collectCoverage": true,
     "coverageThreshold": {
       "global": {
         "branches": 70,

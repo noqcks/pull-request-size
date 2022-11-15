@@ -77,6 +77,8 @@ async function addLabel(ctx, name, color) {
 }
 
 async function getCustomGeneratedFiles(ctx, owner, repo) {
+  // TODO(benji): add a GitHub comment to the PR if the .gitattributes configuration is
+  // invalid
   const files = [];
   const path = '.gitattributes';
 

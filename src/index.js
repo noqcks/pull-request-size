@@ -50,6 +50,9 @@ module.exports = (app) => {
 
       let customLabels;
       try {
+        // TODO(benji): add a GitHub comment to the PR if the labels configuration is
+        // invalid
+
         // custom labels stored in .github/labels.yml
         customLabels = await ctx.config('labels.yml', labels.labels);
       } catch (err) {

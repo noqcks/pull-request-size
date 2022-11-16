@@ -69,7 +69,7 @@ function nockAccessToken() {
     .reply(200, { token: 'test' });
 }
 
-function nockGetPullRequestFiles() {
+function nockListPullRequestFiles() {
   nock('https://api.github.com')
     .get(`${baseURL}/pulls/${pullNumber}/files?per_page=100`)
     .reply(200, mockListFiles);
@@ -163,7 +163,7 @@ module.exports = {
   nockCustomLabelFoundInUserRepo,
   nockGetCustomGeneratedFilesNotFound,
   nockGetLabelWithSize,
-  nockGetPullRequestFiles,
+  nockListPullRequestFiles,
   nockInstallation,
   nockNoLabelymlFoundInUsersGithubRepo,
   nockNolabelymlFoundInRepo,

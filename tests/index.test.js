@@ -16,7 +16,7 @@ beforeEach(() => {
 });
 
 test('creates a label when a pull request is opened', async () => {
-  helpers.nockGetPullRequestFiles();
+  helpers.nockListPullRequestFiles();
   helpers.nockGetCustomGeneratedFilesNotFound();
   helpers.nockNolabelymlFoundInRepo();
   helpers.nockNoLabelymlFoundInUsersGithubRepo();
@@ -41,7 +41,7 @@ test('creates a label when a pull request is opened', async () => {
 });
 
 test('remove existing size labels', async () => {
-  helpers.nockGetPullRequestFiles();
+  helpers.nockListPullRequestFiles();
   helpers.nockGetCustomGeneratedFilesNotFound();
   helpers.nockNolabelymlFoundInRepo();
   helpers.nockNoLabelymlFoundInUsersGithubRepo();
@@ -61,7 +61,7 @@ test('remove existing size labels', async () => {
 });
 
 test('creates a label when a pull request is edited', async () => {
-  helpers.nockGetPullRequestFiles();
+  helpers.nockListPullRequestFiles();
   helpers.nockGetCustomGeneratedFilesNotFound();
   helpers.nockNolabelymlFoundInRepo();
   helpers.nockNoLabelymlFoundInUsersGithubRepo();
@@ -80,7 +80,7 @@ test('creates a label when a pull request is edited', async () => {
 });
 
 test('creates a label when a pull request is synchronized', async () => {
-  helpers.nockGetPullRequestFiles();
+  helpers.nockListPullRequestFiles();
   helpers.nockGetCustomGeneratedFilesNotFound();
   helpers.nockNolabelymlFoundInRepo();
   helpers.nockNoLabelymlFoundInUsersGithubRepo();
@@ -97,7 +97,7 @@ test('creates a label when a pull request is synchronized', async () => {
 });
 
 test('verify custom labels from current repo takes precedence to the default ones', async () => {
-  helpers.nockGetPullRequestFiles();
+  helpers.nockListPullRequestFiles();
   helpers.nockGetCustomGeneratedFilesNotFound();
   helpers.nockCustomLabelFoundInRepo();
   helpers.nockNoLabelymlFoundInUsersGithubRepo();
@@ -132,7 +132,7 @@ test('verify custom labels from current repo takes precedence to the default one
 });
 
 test('verify merge of default missing labels using configuration from the .github repo', async () => {
-  helpers.nockGetPullRequestFiles();
+  helpers.nockListPullRequestFiles();
   helpers.nockGetCustomGeneratedFilesNotFound();
   helpers.nockNolabelymlFoundInRepo();
   helpers.nockCustomLabelFoundInUserRepo();

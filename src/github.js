@@ -44,7 +44,7 @@ async function hasValidSubscriptionForRepo(app, ctx) {
   return true;
 }
 
-async function getPullRequestFiles(ctx, owner, repo, number) {
+async function listPullRequestFiles(ctx, owner, repo, number) {
   return ctx.octokit.paginate(
     ctx.octokit.pulls.listFiles,
     {
@@ -113,18 +113,46 @@ async function removeExistingLabels(ctx, label, customLabels) {
   });
 }
 
+async function getFileContent(ctx, owner, repo, filename, ref) {
+  let response;
+  try {
+    response = await ctx.octokit.repos.getContent({
+      owner,
+      repo,
+      path: filename,
+      ref,
+    });
+  } catch (e) {
+    return '';
+  }
+
+  const buff = Buffer.from(response.data.content, 'base64');
+  return buff.toString('ascii');
+}
+
 async function getAdditionsAndDeletions(ctx) {
   const { number } = ctx.payload.pull_request;
   const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
   let { additions, deletions } = ctx.payload.pull_request;
 
   // grab all pages for files modified in the pull request
-  const files = await getPullRequestFiles(ctx, owner, repo, number);
+  const files = await listPullRequestFiles(ctx, owner, repo, number);
   // get list of custom generated files as defined in .gitattributes
   const customGeneratedFiles = await getCustomGeneratedFiles(ctx, owner, repo);
 
-  files.every((file) => {
-    const g = new Generated(file.filename, file.patch);
+  const isPublicRepo = context.isPublicRepo(ctx);
+  const commitSha = context.getPullRequestCommitSha(ctx);
+
+  files.every(async (file) => {
+    let fileContent = '';
+    // for private repos we can only use the file name to determine if it is generated
+    // file, since we don't ask for file content read permissions in the Pull Request Size
+    // app.
+    if (isPublicRepo) {
+      fileContent = await getFileContent(ctx, owner, repo, file.filename, commitSha);
+    }
+
+    const g = new Generated(file.filename, fileContent);
     // if files are generated, remove them from the additions/deletions total
     if (utils.globMatch(file.filename, customGeneratedFiles) || g.isGenerated()) {
       additions -= file.additions;
@@ -138,7 +166,7 @@ async function getAdditionsAndDeletions(ctx) {
 module.exports = {
   removeExistingLabels,
   addLabel,
-  getPullRequestFiles,
+  listPullRequestFiles,
   getCustomGeneratedFiles,
   hasValidSubscriptionForRepo,
   getAdditionsAndDeletions,

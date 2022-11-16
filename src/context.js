@@ -15,6 +15,15 @@ function isPrivateOrgRepo(ctx) {
   return repository.private && repository.owner.type === 'Organization';
 }
 
+function isPublicRepo(ctx) {
+  const { repository } = ctx.payload;
+  return !repository.private;
+}
+
+function getPullRequestCommitSha(ctx) {
+  return ctx.payload.pull_request.head.sha;
+}
+
 function blockedAccount(ctx) {
   const blockedAccounts = ['stevenans9859'];
   if (blockedAccounts.includes(getRepoOwnerLogin(ctx))) {
@@ -34,4 +43,6 @@ module.exports = {
   isPrivateOrgRepo,
   blockedAccount,
   changedFiles,
+  isPublicRepo,
+  getPullRequestCommitSha,
 };

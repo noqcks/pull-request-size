@@ -58,7 +58,7 @@ module.exports = (app) => {
           message: 'Public Repo PRS Execution',
           extra: {
             repo: ctx.payload.repository.full_name,
-            url: ctx.payload.repository.html_url,
+            url: `${ctx.payload.repository.html_url}/pulls/${ctx.payload.number}`,
             additions,
             deletions,
           },

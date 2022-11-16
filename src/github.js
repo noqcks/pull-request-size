@@ -128,7 +128,7 @@ async function getFileContent(ctx, owner, repo, filename, ref) {
   }
 }
 
-async function getAdditionsAndDeletions(app, ctx) {
+async function getAdditionsAndDeletions(app, ctx, isPublicRepo) {
   const { number } = ctx.payload.pull_request;
   const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
   let { additions, deletions } = ctx.payload.pull_request;
@@ -138,10 +138,9 @@ async function getAdditionsAndDeletions(app, ctx) {
   // get list of custom generated files as defined in .gitattributes
   const customGeneratedFiles = await getCustomGeneratedFiles(ctx, owner, repo);
 
-  const isPublicRepo = context.isPublicRepo(ctx);
   const commitSha = context.getPullRequestCommitSha(ctx);
 
-  files.every(async (file) => {
+  await Promise.all(files.map(async (file) => {
     let fileContent = file.patch || '';
     // for private repos we can only use the file name to determine if it is generated
     // file, since we don't ask for file content read permissions in the Pull Request Size
@@ -149,16 +148,13 @@ async function getAdditionsAndDeletions(app, ctx) {
     if (isPublicRepo) {
       fileContent = await getFileContent(ctx, owner, repo, file.filename, commitSha);
     }
-
     const g = new Generated(file.filename, fileContent);
-    app.log(`file: ${file.filename}, isGenerated: ${g.isGenerated()}`);
     // if files are generated, remove them from the additions/deletions total
     if (utils.globMatch(file.filename, customGeneratedFiles) || g.isGenerated()) {
       additions -= file.additions;
       deletions -= file.deletions;
     }
-    return true;
-  });
+  }));
   return [additions, deletions];
 }
 

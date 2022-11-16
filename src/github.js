@@ -123,7 +123,8 @@ async function getAdditionsAndDeletions(ctx) {
   const customGeneratedFiles = await getCustomGeneratedFiles(ctx, owner, repo);
 
   files.every((file) => {
-    const g = new Generated(file.filename, file.patch);
+    const content = file.patch || '';
+    const g = new Generated(file.filename, content);
     // if files are generated, remove them from the additions/deletions total
     if (utils.globMatch(file.filename, customGeneratedFiles) || g.isGenerated()) {
       additions -= file.additions;

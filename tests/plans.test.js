@@ -40,7 +40,7 @@ test('installed as marketplace pro plan', async () => {
 
 test('free Pro subscription', async () => {
   const pullRequestOpenedPayloadCopy = JSON.parse(JSON.stringify(pullRequestOpenedPayload));
-  pullRequestOpenedPayloadCopy.repository.owner.login = 'test';
+  pullRequestOpenedPayloadCopy.repository.owner.login = 'AdaSupport';
   const ctx = {
     payload: pullRequestOpenedPayloadCopy,
   };

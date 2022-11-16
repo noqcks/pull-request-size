@@ -85,19 +85,18 @@ async function getCustomGeneratedFiles(ctx, owner, repo) {
   let response;
   try {
     response = await ctx.octokit.repos.getContent({ owner, repo, path });
+    const buff = Buffer.from(response.data.content, 'base64');
+    const lines = buff.toString('ascii').split('\n');
+
+    lines.forEach((item) => {
+      if (item.includes('linguist-generated=true')) {
+        files.push(item.split(' ')[0]);
+      }
+    });
+    return files;
   } catch (e) {
     return files;
   }
-
-  const buff = Buffer.from(response.data.content, 'base64');
-  const lines = buff.toString('ascii').split('\n');
-
-  lines.forEach((item) => {
-    if (item.includes('linguist-generated=true')) {
-      files.push(item.split(' ')[0]);
-    }
-  });
-  return files;
 }
 
 async function removeExistingLabels(ctx, label, customLabels) {

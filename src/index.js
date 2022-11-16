@@ -42,9 +42,6 @@ module.exports = (app) => {
       return;
     }
 
-    // TODO(benji): add gh comment when user has a GitHub IP denylist set. Add static
-    // outbound IP to lambda environment.
-
     if (await github.hasValidSubscriptionForRepo(app, ctx)) {
       const [additions, deletions] = await github.getAdditionsAndDeletions(ctx);
 

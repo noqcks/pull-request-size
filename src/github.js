@@ -10,7 +10,7 @@ const buyComment = 'Hi there :wave:\n\nUsing this App for a private organization
   + 'If you are a non-profit organization or otherwise can not pay for such a plan, contact me by '
   + '[creating an issue](https://github.com/noqcks/pull-request-size/issues)';
 
-async function addBuyProComment(ctx) {
+async function addBuyProComment(app, ctx) {
   const { number } = ctx.payload.pull_request;
   const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
 
@@ -28,6 +28,7 @@ async function addBuyProComment(ctx) {
       issue_number: number,
       body: buyComment,
     });
+    app.log('Added comment to buy Pro Plan');
   }
 }
 
@@ -35,8 +36,7 @@ async function hasValidSubscriptionForRepo(app, ctx) {
   if (context.isPrivateOrgRepo(ctx)) {
     const isProPlan = await plans.isProPlan(app, ctx);
     if (!isProPlan) {
-      await addBuyProComment(ctx);
-      app.log('Added comment to buy Pro Plan');
+      await addBuyProComment(app, ctx);
       return false;
     }
     return true;

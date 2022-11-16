@@ -24,7 +24,13 @@ module.exports = (app) => {
     'marketplace_purchase.cancelled',
     'marketplace_purchase.pending_change',
   ], async (ctx) => {
-    await MarketplacePurchase.handle(app, ctx);
+    const [account, change, plan] = await MarketplacePurchase.handle(app, ctx);
+    await Sentry.captureEvent({
+      message: `Marketplace: ${change} ${plan}`,
+      extra: {
+        org: account,
+      },
+    });
   });
 
   app.on([

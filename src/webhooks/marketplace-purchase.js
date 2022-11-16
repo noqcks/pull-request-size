@@ -1,3 +1,5 @@
+const Sentry = require('@sentry/node');
+
 function getChangeEmoji(action, plan, previous) {
   switch (action) {
     case 'purchased':
@@ -16,7 +18,12 @@ async function handle(app, ctx) {
   const changeEmoji = getChangeEmoji(action, plan, previous);
   const change = action === 'changed' ? 'changed to' : action;
   app.log(`${changeEmoji} ${account.type} ${account.login} ${change} ${plan.name}`);
-  console.log(`${changeEmoji} ${account.type} ${account.login} ${change} ${plan.name}`);
+  await Sentry.captureEvent({
+    message: `Marketplace: ${change} ${plan.name}`,
+    extra: {
+      org: account.login,
+    },
+  });
 }
 
 module.exports = {

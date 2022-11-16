@@ -16,7 +16,7 @@ async function handle(app, ctx) {
   const changeEmoji = getChangeEmoji(action, plan, previous);
   const change = action === 'changed' ? 'changed to' : action;
   app.log(`${changeEmoji} ${account.type} ${account.login} ${change} ${plan.name}`);
-  console.log(`${changeEmoji} ${account.type} ${account.login} ${change} ${plan.name}`);
+  return [account.login, change, plan.name];
 }
 
 module.exports = {

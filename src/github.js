@@ -10,7 +10,7 @@ const buyComment = 'Hi there :wave:\n\nUsing this App for a private organization
   + 'If you are a non-profit organization or otherwise can not pay for such a plan, contact me by '
   + '[creating an issue](https://github.com/noqcks/pull-request-size/issues)';
 
-async function addBuyProComment(ctx) {
+async function addBuyProComment(app, ctx) {
   const { number } = ctx.payload.pull_request;
   const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
 
@@ -28,6 +28,7 @@ async function addBuyProComment(ctx) {
       issue_number: number,
       body: buyComment,
     });
+    app.log('Added comment to buy Pro Plan');
   }
 }
 
@@ -35,8 +36,7 @@ async function hasValidSubscriptionForRepo(app, ctx) {
   if (context.isPrivateOrgRepo(ctx)) {
     const isProPlan = await plans.isProPlan(app, ctx);
     if (!isProPlan) {
-      await addBuyProComment(ctx);
-      app.log('Added comment to buy Pro Plan');
+      await addBuyProComment(app, ctx);
       return false;
     }
     return true;
@@ -85,19 +85,18 @@ async function getCustomGeneratedFiles(ctx, owner, repo) {
   let response;
   try {
     response = await ctx.octokit.repos.getContent({ owner, repo, path });
+    const buff = Buffer.from(response.data.content, 'base64');
+    const lines = buff.toString('ascii').split('\n');
+
+    lines.forEach((item) => {
+      if (item.includes('linguist-generated=true')) {
+        files.push(item.split(' ')[0]);
+      }
+    });
+    return files;
   } catch (e) {
     return files;
   }
-
-  const buff = Buffer.from(response.data.content, 'base64');
-  const lines = buff.toString('ascii').split('\n');
-
-  lines.forEach((item) => {
-    if (item.includes('linguist-generated=true')) {
-      files.push(item.split(' ')[0]);
-    }
-  });
-  return files;
 }
 
 async function removeExistingLabels(ctx, label, customLabels) {
@@ -143,7 +142,7 @@ async function getAdditionsAndDeletions(ctx) {
   const commitSha = context.getPullRequestCommitSha(ctx);
 
   files.every(async (file) => {
-    let fileContent = '';
+    let fileContent = file.patch || '';
     // for private repos we can only use the file name to determine if it is generated
     // file, since we don't ask for file content read permissions in the Pull Request Size
     // app.

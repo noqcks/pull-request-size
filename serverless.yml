@@ -19,7 +19,7 @@ functions:
   webhooks:
     name: pr-size
     handler: src/handler.webhooks
-    timeout: 60
+    timeout: 30
     memorySize: 256
     provisionedConcurrency: 1
     events:

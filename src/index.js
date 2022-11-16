@@ -30,6 +30,7 @@ module.exports = (app) => {
       extra: {
         org: account,
       },
+      level: 'info',
     });
   });
 

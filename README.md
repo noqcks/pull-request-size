@@ -32,6 +32,17 @@ total additions + total deletions - (all generated¹ file additions/deletions)
 
 ¹ A generated file is either one of the standard generated files as defined in [noqcks/generated](https://github.com/noqcks/generated/blob/master/lib/generated.js) or defined with `linguist-generated=true` in a `.gitattributes` file.
 
+## Billing Issues
+
+<img width="579" alt="image" src="https://user-images.githubusercontent.com/4740147/202276762-3c13b106-1194-4725-80ba-a65e8ffaffc0.png">
+
+When an invoiced GitHub account tries to sign up for a subscription to Pull Request Size via the GitHub Marketplace they are met with the following message: "Unfortunately, invoiced customers cannot purchase paid plans on the Github Marketplace."
+
+To get around GitHub billing limitations, we also offer payment via Stripe invoicing. Please follow these steps to complete:
+
+1. Sign up for the Free plan on the [GitHub Marketplace listing](https://github.com/marketplace/pull-request-size)
+2. Send an email to benji@093b.org with a `company name`, `email of a billing contact`, and the `name of your GitHub Organization`. Please indicate whether you would like a yearly or monthly invoice.
+3. Once the Stripe invoice has been paid, you will be added to Pro plan. 
 
 ## Configuration
 

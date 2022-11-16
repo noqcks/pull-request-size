@@ -122,12 +122,11 @@ async function getFileContent(ctx, owner, repo, filename, ref) {
       path: filename,
       ref,
     });
+    const buff = Buffer.from(response.data.content, 'base64');
+    return buff.toString('ascii');
   } catch (e) {
     return '';
   }
-
-  const buff = Buffer.from(response.data.content, 'base64');
-  return buff.toString('ascii');
 }
 
 async function getAdditionsAndDeletions(ctx) {

@@ -128,7 +128,7 @@ async function getFileContent(ctx, owner, repo, filename, ref) {
   }
 }
 
-async function getAdditionsAndDeletions(ctx) {
+async function getAdditionsAndDeletions(app, ctx) {
   const { number } = ctx.payload.pull_request;
   const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
   let { additions, deletions } = ctx.payload.pull_request;
@@ -151,6 +151,7 @@ async function getAdditionsAndDeletions(ctx) {
     }
 
     const g = new Generated(file.filename, fileContent);
+    app.log(`file: ${file.filename}, isGenerated: ${g.isGenerated()}`);
     // if files are generated, remove them from the additions/deletions total
     if (utils.globMatch(file.filename, customGeneratedFiles) || g.isGenerated()) {
       additions -= file.additions;

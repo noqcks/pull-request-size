@@ -50,7 +50,7 @@ module.exports = (app) => {
     }
 
     if (await github.hasValidSubscriptionForRepo(app, ctx)) {
-      const [additions, deletions] = await github.getAdditionsAndDeletions(ctx);
+      const [additions, deletions] = await github.getAdditionsAndDeletions(app, ctx);
 
       let customLabels;
       try {

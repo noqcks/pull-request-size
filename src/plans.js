@@ -6,13 +6,23 @@ function freeProSubscription(login) {
   return match !== undefined;
 }
 
+function invoicedProSubscription(login) {
+  const organizations = ['pace-int'];
+  const match = organizations.find((o) => o.toLowerCase() === String(login).toLowerCase());
+  return match !== undefined;
+}
+
 async function isProPlan(app, ctx) {
   try {
     const id = context.getRepoOwnerId(ctx);
     const login = context.getRepoOwnerLogin(ctx);
     app.log(`Checking Marketplace for organization: https://github.com/${login} ...`);
     if (freeProSubscription(login)) {
-      app.log('Found free Pro ❤️  plan');
+      app.log('Found free Pro ❤️ plan');
+      return true;
+    }
+    if (invoicedProSubscription(login)) {
+      app.log('Found invoiced Pro plan');
       return true;
     }
 

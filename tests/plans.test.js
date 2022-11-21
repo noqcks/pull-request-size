@@ -38,6 +38,16 @@ test('installed as marketplace pro plan', async () => {
   expect(result).toBeTruthy();
 });
 
+test('incoived Pro subscription', async () => {
+  const pullRequestOpenedPayloadCopy = JSON.parse(JSON.stringify(pullRequestOpenedPayload));
+  pullRequestOpenedPayloadCopy.repository.owner.login = 'pace-int';
+  const ctx = {
+    payload: pullRequestOpenedPayloadCopy,
+  };
+  const result = await plans.isProPlan(probot, ctx);
+  expect(result).toBeTruthy();
+});
+
 test('free Pro subscription', async () => {
   const pullRequestOpenedPayloadCopy = JSON.parse(JSON.stringify(pullRequestOpenedPayload));
   pullRequestOpenedPayloadCopy.repository.owner.login = 'AdaSupport';

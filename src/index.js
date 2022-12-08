@@ -53,17 +53,17 @@ module.exports = (app) => {
       const isPublicRepo = context.isPublicRepo(ctx);
       const [additions, deletions] = await github.getAdditionsAndDeletions(app, ctx, isPublicRepo);
 
-      if (isPublicRepo) {
-        await Sentry.captureEvent({
-          message: 'Public Repo PRS Execution',
-          extra: {
-            repo: ctx.payload.repository.full_name,
-            url: `${ctx.payload.repository.html_url}/pull/${ctx.payload.number}`,
-            additions,
-            deletions,
-          },
-        });
-      }
+      // if (isPublicRepo) {
+      //   await Sentry.captureEvent({
+      //     message: 'Public Repo PRS Execution',
+      //     extra: {
+      //       repo: ctx.payload.repository.full_name,
+      //       url: `${ctx.payload.repository.html_url}/pull/${ctx.payload.number}`,
+      //       additions,
+      //       deletions,
+      //     },
+      //   });
+      // }
 
       let customLabels;
       try {

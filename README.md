@@ -9,7 +9,7 @@ Pull Request Size is a GitHub App that applies `size/*` labels to Pull Requests 
 
 ## Install
 
-👉 **Install via [GitHub marketplace](https://github.com/apps/pull-request-size)** 🌟
+👉 **Install via [GitHub marketplace](https://github.com/marketplace/pull-request-size/)** 🌟
 
 _This app is free to use for personal and public organization repos. There is a paid plan for
 use with private organization repos._

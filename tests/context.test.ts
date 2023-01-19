@@ -1,34 +1,32 @@
-let pullRequestOpenedPayload = require('./fixtures/pull_request.opened.json');
-let context = require('../src/context');
+const pullRequestOpenedPayload = require('./fixtures/pull_request.opened.json');
+import { Context } from 'probot';
+import { getRepoOwnerLogin, getRepoOwnerId, isPrivateOrgRepo} from '../src/context';
+import { PullRequestEvent } from '../src/types';
 
 test('get owner', () => {
-  const ctx = { payload: pullRequestOpenedPayload };
+  const ctx = { payload: pullRequestOpenedPayload } as Context<PullRequestEvent>;
 
-  expect(context.getRepoOwnerLogin(ctx)).toBe('noqcks');
+  expect(getRepoOwnerLogin(ctx)).toBe('noqcks');
 });
 
 test('get repo owner id', () => {
-  const ctx = { payload: pullRequestOpenedPayload };
+  const ctx = { payload: pullRequestOpenedPayload } as Context<PullRequestEvent>;
 
-  expect(context.getRepoOwnerId(ctx)).toBe(4740147);
+  expect(getRepoOwnerId(ctx)).toBe(4740147);
 });
 
-test('get pull request', () => {
-  const ctx = { payload: pullRequestOpenedPayload };
-
-  expect(context.getPullRequest(ctx)).toBe(pullRequestOpenedPayload.pull_request);
-});
 
 test('is private org repo', () => {
-  expect(context.isPrivateOrgRepo({ payload: pullRequestOpenedPayload })).toBe(false);
+  const ctx = { payload: pullRequestOpenedPayload } as Context<PullRequestEvent>;
+  expect(isPrivateOrgRepo(ctx)).toBe(false);
 
   const payloadCopy = JSON.parse(JSON.stringify(pullRequestOpenedPayload));
   // console.log(payloadCopy.repository)
   payloadCopy.repository.private = true;
-  expect(context.isPrivateOrgRepo({ payload: payloadCopy })).toBe(false);
+  expect(isPrivateOrgRepo({ payload: payloadCopy }  as Context<PullRequestEvent>)).toBe(false);
 
   payloadCopy.repository.owner.type = 'Organization';
-  expect(context.isPrivateOrgRepo({ payload: payloadCopy })).toBe(true);
+  expect(isPrivateOrgRepo({ payload: payloadCopy } as Context<PullRequestEvent>)).toBe(true);
 });
 
 export {};

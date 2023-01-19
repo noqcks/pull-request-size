@@ -1,9 +1,6 @@
-const Sentry = require('@sentry/node');
-
-
-const github = require('./github');
-const context = require('./context');
-
+import Sentry from '@sentry/node';
+import { hasValidSubscriptionForRepo, getAdditionsAndDeletions,removeExistingLabels, addLabel } from './github';
+import {blockedAccount, changedFiles, isPublicRepo} from './context';
 import { Labels, defaultLabels, generateSizeLabel } from './labels';
 import type { ApplicationFunction } from 'probot/lib/types'
 import { Context, Probot } from 'probot';
@@ -47,18 +44,18 @@ const onApp: ApplicationFunction = (app: Probot) => {
     'pull_request.synchronize',
     'pull_request.edited',
   ], async (ctx: Context<PullRequestEvent>) => {
-    if (context.blockedAccount(ctx)) {
+    if (blockedAccount(ctx)) {
       return;
     }
 
-    if (context.changedFiles(ctx) > MAX_FILES) {
+    if (changedFiles(ctx) > MAX_FILES) {
       // TODO(benji): add gh comment about the number of files being too large
       return;
     }
 
-    if (await github.hasValidSubscriptionForRepo(app, ctx)) {
-      const isPublicRepo = context.isPublicRepo(ctx);
-      const [additions, deletions] = await github.getAdditionsAndDeletions(ctx, isPublicRepo);
+    if (await hasValidSubscriptionForRepo(app, ctx)) {
+      const publicRepo = isPublicRepo(ctx);
+      const [additions, deletions] = await getAdditionsAndDeletions(ctx, publicRepo);
 
       // if (isPublicRepo) {
       //   await Sentry.captureEvent({
@@ -85,11 +82,12 @@ const onApp: ApplicationFunction = (app: Probot) => {
       }
 
       const [labelColor, label] = generateSizeLabel(additions + deletions, customLabels!);
-      // remove any existing size label if it exists and is not the label to add
-      await github.removeExistingLabels(ctx, label, customLabels);
 
-      // // assign GitHub label
-      await github.addLabel(ctx, label, labelColor);
+      // remove any existing size label if it exists and is not the label to add
+      await removeExistingLabels(ctx, label, customLabels!);
+
+      // assign GitHub label
+      await addLabel(ctx, label, labelColor);
     }
   });
 };

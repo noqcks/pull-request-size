@@ -50,7 +50,7 @@ export type ReturnLabel = [string, string];
  * @param l The labels object
  * @return [string, string] The label and the color of the label.
  */
-export function generateSizeLabel(lineCount: number, l: Labels): ReturnLabel | [] {
+export function generateSizeLabel(lineCount: number, l: Labels): ReturnLabel {
   if (lineCount < l.S.lines) {
     return [l.XS.color, l.XS.name];
   } if (lineCount < l.M.lines) {

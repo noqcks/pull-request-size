@@ -1,4 +1,4 @@
-const context = require('./context');
+import { getRepoOwnerId, getRepoOwnerLogin} from './context';
 import { Context, Probot } from 'probot';
 import { PullRequestEvent } from './types';
 
@@ -15,10 +15,10 @@ function invoicedProSubscription(login: string) {
   return match !== undefined;
 }
 
-async function isProPlan(app: Probot, ctx: Context<PullRequestEvent>) {
+export async function isProPlan(app: Probot, ctx: Context<PullRequestEvent>) {
   try {
-    const id = context.getRepoOwnerId(ctx);
-    const login = context.getRepoOwnerLogin(ctx);
+    const id = getRepoOwnerId(ctx);
+    const login = getRepoOwnerLogin(ctx);
     app.log(`Checking Marketplace for organization: https://github.com/${login} ...`);
     if (freeProSubscription(login)) {
       app.log('Found free Pro ❤️ plan');
@@ -48,7 +48,3 @@ async function isProPlan(app: Probot, ctx: Context<PullRequestEvent>) {
     return false;
   }
 }
-
-module.exports = {
-  isProPlan,
-};

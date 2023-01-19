@@ -3,8 +3,8 @@ const {
   createProbot,
 } = require('@probot/adapter-aws-lambda-serverless');
 
-const appFn = require('.');
+import onApp from "./index"
 
-module.exports.webhooks = createLambdaFunction(appFn, {
+export const webhooks = createLambdaFunction(onApp, {
   probot: createProbot(),
 });

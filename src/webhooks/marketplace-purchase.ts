@@ -1,4 +1,4 @@
-function getChangeEmoji(action, plan, previous) {
+function getChangeEmoji(action: string, plan: any, previous: any): string {
   switch (action) {
     case 'purchased':
       return '✅';
@@ -9,7 +9,7 @@ function getChangeEmoji(action, plan, previous) {
   }
 }
 
-async function handle(app, ctx) {
+async function handleMarketplacePurchase(app: any, ctx: any): Promise<[string, string, string]> {
   const {
     action, marketplace_purchase: { account, plan }, previous_marketplace_purchase: previous,
   } = ctx.payload;
@@ -19,6 +19,4 @@ async function handle(app, ctx) {
   return [account.login, change, plan.name];
 }
 
-module.exports = {
-  handle,
-};
+export { handleMarketplacePurchase }

@@ -1,6 +1,7 @@
 const nock = require('nock');
 const { Probot, ProbotOctokit } = require('probot');
 const myProbotApp = require('../src/index');
+import {Labels} from '../src/labels';
 const mockListFiles = require('./mocks/list-pull-request-files.json');
 const mockLabel = require('./mocks/label.json');
 
@@ -10,17 +11,42 @@ const repo = 'pull-request-size';
 const baseURL = `/repos/${owner}/${repo}`;
 const baseUrlDotGitHub = `/repos/${owner}/.github`;
 
-const label = {
+const label: {[key: string]: string}= {
   xsmall: 'size%2FXS',
   small: 'size%2FS',
   medium: 'size%2FM',
 };
 
-const confCustomNameSLabel = {
+const confCustomNameSLabel: Labels = {
+  XS: {
+    name: 'customxsmall',
+    lines: 5,
+    color: '3CBF00',
+  },
   S: {
     name: 'customsmall',
     lines: 10,
     color: '5D9801',
+  },
+  M: {
+    name: 'custommedium',
+    lines: 30,
+    color: '7F7203',
+  },
+  L: {
+    name: 'customlarge',
+    lines: 100,
+    color: 'A14C05',
+  },
+  XL: {
+    name: 'customxlarge',
+    lines: 500,
+    color: 'C32607',
+  },
+  XXL: {
+    name: 'customxxlarge',
+    lines: 1000,
+    color: 'E50009',
   },
 };
 
@@ -34,8 +60,8 @@ const confOnlyMLabel = {
 
 function initNock() {
   nock.disableNetConnect();
-  const logRequest = (r) => console.log(`No match: ${r.path}, method: ${r.method}, host: ${r.options.host}`);
-  nock.emitter.on('no match', (req) => {
+  const logRequest = (r: any) => console.log(`No match: ${r.path}, method: ${r.method}, host: ${r.options.host}`);
+  nock.emitter.on('no match', (req: string) => {
     logRequest(req);
   });
 }
@@ -117,13 +143,13 @@ function nockCreateLabel() {
     .reply(201, mockLabel);
 }
 
-function nockGetLabelWithSizeNotFound(size) {
+function nockGetLabelWithSizeNotFound(size: string) {
   nock('https://api.github.com')
     .get(`${baseURL}/labels/${label[size]}`)
     .reply(404);
 }
 
-function nockGetLabelWithSize(size) {
+function nockGetLabelWithSize(size: string) {
   nock('https://api.github.com')
     .get(`${baseURL}/labels/${label[size]}`)
     .reply(200, mockLabel);
@@ -135,13 +161,13 @@ function nockAddLabelToPullRequest() {
     .reply(200, [label]);
 }
 
-function nockRemoveLabelWithSize(size) {
+function nockRemoveLabelWithSize(size: string) {
   nock('https://api.github.com')
     .delete(`${baseURL}/issues/${pullNumber}/labels/${label[size]}`)
     .reply(200);
 }
 
-function nockInstallation(installation) {
+function nockInstallation(installation: string) {
   nock('https://api.github.com')
     .persist()
     .get('/users/noqcks/installation')

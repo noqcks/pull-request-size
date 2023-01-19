@@ -2,6 +2,11 @@ const Generated = require('@noqcks/generated');
 const context = require('./context');
 const plans = require('./plans');
 const utils = require('./utils');
+import { Labels } from './labels';
+import { Probot, Context } from "probot";
+
+import { PullRequestEvent } from './types';
+
 
 const buyComment = 'Hi there :wave:\n\nUsing this App for a private organization repository requires a paid '
   + 'subscription. \n\n'
@@ -10,14 +15,13 @@ const buyComment = 'Hi there :wave:\n\nUsing this App for a private organization
   + 'If you are a non-profit organization or otherwise can not pay for such a plan, contact me by '
   + '[creating an issue](https://github.com/noqcks/pull-request-size/issues)';
 
-async function addBuyProComment(app, ctx) {
-  const { number } = ctx.payload.pull_request;
-  const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
+async function addBuyProComment(app: Probot, ctx: Context<PullRequestEvent>) {
+  const { pull_number, owner, repo } = ctx.pullRequest();
 
   const comments = await ctx.octokit.rest.issues.listComments({
     owner,
     repo,
-    issue_number: number,
+    issue_number: pull_number,
   });
 
   const hasBuyComment = comments.data.some((comment) => comment.body === buyComment);
@@ -25,14 +29,14 @@ async function addBuyProComment(app, ctx) {
     await ctx.octokit.issues.createComment({
       owner,
       repo,
-      issue_number: number,
+      issue_number: pull_number,
       body: buyComment,
     });
     app.log('Added comment to buy Pro Plan');
   }
 }
 
-async function hasValidSubscriptionForRepo(app, ctx) {
+async function hasValidSubscriptionForRepo(app: Probot, ctx: Context<PullRequestEvent>) {
   if (context.isPrivateOrgRepo(ctx)) {
     const isProPlan = await plans.isProPlan(app, ctx);
     if (!isProPlan) {
@@ -44,19 +48,19 @@ async function hasValidSubscriptionForRepo(app, ctx) {
   return true;
 }
 
-async function listPullRequestFiles(ctx, owner, repo, number) {
+async function listPullRequestFiles(ctx: Context<PullRequestEvent>, owner: string, repo: string, pull_number: number) {
   return ctx.octokit.paginate(
     ctx.octokit.pulls.listFiles,
     {
       owner,
       repo,
-      pull_number: number,
+      pull_number: pull_number,
       per_page: 100,
     },
   );
 }
 
-async function ensureLabelExists(ctx, name, color) {
+async function ensureLabelExists(ctx: Context<PullRequestEvent>, name: string, color: string) {
   try {
     return await ctx.octokit.issues.getLabel(ctx.repo({
       name,
@@ -69,23 +73,27 @@ async function ensureLabelExists(ctx, name, color) {
   }
 }
 
-async function addLabel(ctx, name, color) {
+async function addLabel(ctx: Context<PullRequestEvent>, name: string, color: string) {
   const params = { ...ctx.issue(), labels: [name] };
 
   await ensureLabelExists(ctx, name, color);
   await ctx.octokit.issues.addLabels(params);
 }
 
-async function getCustomGeneratedFiles(ctx, owner, repo) {
+async function getCustomGeneratedFiles(ctx: Context<PullRequestEvent>, owner: string, repo: string) {
   // TODO(benji): add a GitHub comment to the PR if the .gitattributes configuration is
   // invalid
-  const files = [];
+  const files: string[] = [];
   const path = '.gitattributes';
 
   let response;
   try {
     response = await ctx.octokit.repos.getContent({ owner, repo, path });
-    const buff = Buffer.from(response.data.content, 'base64');
+    if (response?.data != undefined) {
+      return files;
+    }
+    // TODO(benji): add tests here
+    const buff = Buffer.from(response.data['content'], 'base64');
     const lines = buff.toString('ascii').split('\n');
 
     lines.forEach((item) => {
@@ -99,9 +107,9 @@ async function getCustomGeneratedFiles(ctx, owner, repo) {
   }
 }
 
-async function removeExistingLabels(ctx, label, customLabels) {
+async function removeExistingLabels(ctx: Context<PullRequestEvent>, label: string, customLabels: Labels) {
   ctx.payload.pull_request.labels.forEach((prLabel) => {
-    const labelNames = Object.keys(customLabels).map((key) => customLabels[key].name);
+    const labelNames = Object.keys(customLabels)
     if (labelNames.includes(prLabel.name)) {
       if (prLabel.name !== label) {
         ctx.octokit.issues.removeLabel(ctx.issue({
@@ -112,7 +120,7 @@ async function removeExistingLabels(ctx, label, customLabels) {
   });
 }
 
-async function getFileContent(ctx, owner, repo, filename, ref) {
+async function getFileContent(ctx: Context<PullRequestEvent>, owner: string, repo: string, filename: string, ref: string) {
   let response;
   try {
     response = await ctx.octokit.repos.getContent({
@@ -121,17 +129,25 @@ async function getFileContent(ctx, owner, repo, filename, ref) {
       path: filename,
       ref,
     });
-    const buff = Buffer.from(response.data.content, 'base64');
-    return buff.toString('ascii');
+    if (response?.data == undefined) {
+      return '';
+    }
+    if ('content' in response.data) {
+      const buff = Buffer.from(response.data.content, 'base64');
+      return buff.toString('ascii');
+    } else {
+      return '';
+    }
   } catch (e) {
     return '';
   }
 }
 
-async function getAdditionsAndDeletions(app, ctx, isPublicRepo) {
+async function getAdditionsAndDeletions(ctx: Context<PullRequestEvent>, isPublicRepo: boolean) {
   const { number } = ctx.payload.pull_request;
   const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
   let { additions, deletions } = ctx.payload.pull_request;
+
 
   // grab all pages for files modified in the pull request
   const files = await listPullRequestFiles(ctx, owner, repo, number);

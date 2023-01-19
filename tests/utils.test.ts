@@ -8,3 +8,5 @@ test('globMatch', () => {
   expect(utils.globMatch('test.txt', ['*.md'])).toBe(false);
   expect(utils.globMatch('test', ['*.md', '*.js', '*.txt'])).toBe(false);
 });
+
+export {};

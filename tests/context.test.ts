@@ -1,5 +1,5 @@
-const pullRequestOpenedPayload = require('./fixtures/pull_request.opened.json');
-const context = require('../src/context');
+let pullRequestOpenedPayload = require('./fixtures/pull_request.opened.json');
+let context = require('../src/context');
 
 test('get owner', () => {
   const ctx = { payload: pullRequestOpenedPayload };
@@ -30,3 +30,5 @@ test('is private org repo', () => {
   payloadCopy.repository.owner.type = 'Organization';
   expect(context.isPrivateOrgRepo({ payload: payloadCopy })).toBe(true);
 });
+
+export {};

@@ -1,30 +1,33 @@
-function getRepoOwnerLogin(ctx) {
+import { Context } from 'probot';
+import { PullRequestEvent } from './types';
+
+function getRepoOwnerLogin(ctx: Context<PullRequestEvent>) {
   return ctx.payload.repository.owner.login;
 }
 
-function getRepoOwnerId(ctx) {
+function getRepoOwnerId(ctx: Context<PullRequestEvent>) {
   return ctx.payload.repository.owner.id;
 }
 
-function getPullRequest(ctx) {
+function getPullRequest(ctx: Context<PullRequestEvent>) {
   return ctx.payload.pull_request;
 }
 
-function isPrivateOrgRepo(ctx) {
+function isPrivateOrgRepo(ctx: Context<PullRequestEvent>) {
   const { repository } = ctx.payload;
   return repository.private && repository.owner.type === 'Organization';
 }
 
-function isPublicRepo(ctx) {
+function isPublicRepo(ctx: Context<PullRequestEvent>) {
   const { repository } = ctx.payload;
   return !repository.private;
 }
 
-function getPullRequestCommitSha(ctx) {
+function getPullRequestCommitSha(ctx: Context<PullRequestEvent>) {
   return ctx.payload.pull_request.head.sha;
 }
 
-function blockedAccount(ctx) {
+function blockedAccount(ctx: Context<PullRequestEvent>) {
   const blockedAccounts = ['stevenans9859'];
   if (blockedAccounts.includes(getRepoOwnerLogin(ctx))) {
     return true;
@@ -32,7 +35,7 @@ function blockedAccount(ctx) {
   return false;
 }
 
-function changedFiles(ctx) {
+function changedFiles(ctx: Context<PullRequestEvent>) {
   return ctx.payload.pull_request.changed_files;
 }
 

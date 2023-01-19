@@ -1,18 +1,21 @@
 const context = require('./context');
+import { Context, Probot } from 'probot';
+import { PullRequestEvent } from './types';
 
-function freeProSubscription(login) {
+
+function freeProSubscription(login: string) {
   const organizations = ['AdaSupport', 'one-acre-fund'];
   const match = organizations.find((o) => o.toLowerCase() === String(login).toLowerCase());
   return match !== undefined;
 }
 
-function invoicedProSubscription(login) {
+function invoicedProSubscription(login: string) {
   const organizations = ['pace-int', 'honestbank'];
   const match = organizations.find((o) => o.toLowerCase() === String(login).toLowerCase());
   return match !== undefined;
 }
 
-async function isProPlan(app, ctx) {
+async function isProPlan(app: Probot, ctx: Context<PullRequestEvent>) {
   try {
     const id = context.getRepoOwnerId(ctx);
     const login = context.getRepoOwnerLogin(ctx);
@@ -28,6 +31,11 @@ async function isProPlan(app, ctx) {
 
     const res = await ctx.octokit.apps.getSubscriptionPlanForAccount({ account_id: id });
     const purchase = res.data.marketplace_purchase;
+
+    if (!purchase?.plan?.price_model) {
+      app.log('Marketplace purchase not found');
+      return false;
+    }
 
     if (purchase.plan.price_model === 'FREE') {
       app.log('Found Free plan');

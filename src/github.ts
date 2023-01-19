@@ -109,7 +109,7 @@ async function getCustomGeneratedFiles(ctx: Context<PullRequestEvent>, owner: st
 
 async function removeExistingLabels(ctx: Context<PullRequestEvent>, label: string, customLabels: Labels) {
   ctx.payload.pull_request.labels.forEach((prLabel) => {
-    const labelNames = Object.keys(customLabels)
+    const labelNames = Object.values(customLabels).map(label => label.name);
     if (labelNames.includes(prLabel.name)) {
       if (prLabel.name !== label) {
         ctx.octokit.issues.removeLabel(ctx.issue({

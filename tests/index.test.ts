@@ -4,6 +4,7 @@ const prEditedPayload = require('./fixtures/pull_request.edited.json');
 const prSynchronizedPayload = require('./fixtures/pull_request.synchronized.json');
 const nock = require('nock');
 const mockLabel = require('./mocks/label.json');
+const pullRequestFiles = require('./mocks/list-pull-request-files.json');
 import { Probot } from 'probot';
 
 let probot: Probot;
@@ -16,10 +17,22 @@ beforeEach(() => {
   probot = helpers.initProbot();
 });
 
+afterEach(() => {
+  if (!nock.isDone()) {
+    throw new Error(
+      `Not all nock interceptors were used: ${JSON.stringify(
+        nock.pendingMocks()
+      )}`
+    );
+  }
+  nock.cleanAll();
+});
+
 test('creates a label when a pull request is opened', async () => {
   helpers.nockListPullRequestFiles();
   helpers.nockGetCustomGeneratedFilesNotFound();
   helpers.nockNolabelymlFoundInRepo();
+  helpers.nockGetFileContent(pullRequestFiles[0].filename, pullRequestFiles[0].sha);
   helpers.nockNoLabelymlFoundInUsersGithubRepo();
   helpers.nockGetLabelWithSize('small');
 
@@ -38,7 +51,6 @@ test('creates a label when a pull request is opened', async () => {
     name: 'pull_request.opened',
     payload: prOpenedPayload,
   } as any);
-  expect(nock.isDone()).toBeTruthy();
 });
 
 test('remove existing size labels', async () => {
@@ -47,6 +59,7 @@ test('remove existing size labels', async () => {
   helpers.nockNolabelymlFoundInRepo();
   helpers.nockNoLabelymlFoundInUsersGithubRepo();
   helpers.nockGetLabelWithSize('small');
+  helpers.nockGetFileContent(pullRequestFiles[0].filename, pullRequestFiles[0].sha);
   helpers.nockAddLabelToPullRequest();
   helpers.nockRemoveLabelWithSize('medium');
   helpers.nockRemoveLabelWithSize('xsmall');
@@ -58,7 +71,6 @@ test('remove existing size labels', async () => {
     name: 'pull_request.edited',
     payload: prEditedPayload,
   }  as any);
-  expect(nock.isDone()).toBeTruthy();
 });
 
 test('creates a label when a pull request is edited', async () => {
@@ -67,6 +79,7 @@ test('creates a label when a pull request is edited', async () => {
   helpers.nockNolabelymlFoundInRepo();
   helpers.nockNoLabelymlFoundInUsersGithubRepo();
   helpers.nockGetLabelWithSizeNotFound('small');
+  helpers.nockGetFileContent(pullRequestFiles[0].filename, pullRequestFiles[0].sha);
   helpers.nockRemoveLabelWithSize('medium');
   helpers.nockRemoveLabelWithSize('xsmall');
   helpers.nockCreateLabel();
@@ -77,7 +90,6 @@ test('creates a label when a pull request is edited', async () => {
     name: 'pull_request.edited',
     payload: prEditedPayload,
   }  as any);
-  expect(nock.isDone()).toBeTruthy();
 });
 
 test('creates a label when a pull request is synchronized', async () => {
@@ -85,6 +97,7 @@ test('creates a label when a pull request is synchronized', async () => {
   helpers.nockGetCustomGeneratedFilesNotFound();
   helpers.nockNolabelymlFoundInRepo();
   helpers.nockNoLabelymlFoundInUsersGithubRepo();
+  helpers.nockGetFileContent(pullRequestFiles[0].filename, pullRequestFiles[0].sha);
   helpers.nockGetLabelWithSizeNotFound('small');
   helpers.nockCreateLabel();
   helpers.nockAddLabelToPullRequest();
@@ -94,13 +107,13 @@ test('creates a label when a pull request is synchronized', async () => {
     name: 'pull_request.synchronize',
     payload: prSynchronizedPayload,
   }  as any);
-  expect(nock.isDone()).toBeTruthy();
 });
 
 test('verify custom labels from current repo takes precedence to the default ones', async () => {
   helpers.nockListPullRequestFiles();
   helpers.nockGetCustomGeneratedFilesNotFound();
   helpers.nockCustomLabelFoundInRepo();
+  helpers.nockGetFileContent(pullRequestFiles[0].filename, pullRequestFiles[0].sha);
   helpers.nockNoLabelymlFoundInUsersGithubRepo();
   // get label will return 404 for a non-existing label
   helpers.nockCustomLabelDoesntExist();
@@ -130,12 +143,15 @@ test('verify custom labels from current repo takes precedence to the default one
     .toEqual(expect.arrayContaining(
       [`GET https://api.github.com:443${helpers.baseUrlDotGitHub}/contents/.github%2Flabels.yml`],
     ));
+  expect(nock.activeMocks()).toHaveLength(1);
+  nock.cleanAll();
 });
 
 test('verify merge of default missing labels using configuration from the .github repo', async () => {
   helpers.nockListPullRequestFiles();
   helpers.nockGetCustomGeneratedFilesNotFound();
   helpers.nockNolabelymlFoundInRepo();
+  helpers.nockGetFileContent(pullRequestFiles[0].filename, pullRequestFiles[0].sha);
   helpers.nockCustomLabelFoundInUserRepo();
   helpers.nockGetLabelWithSize('small');
 
@@ -152,8 +168,6 @@ test('verify merge of default missing labels using configuration from the .githu
     name: 'pull_request.opened',
     payload: prOpenedPayload,
   }  as any);
-
-  expect(nock.isDone()).toBeTruthy();
 });
 
 export {};

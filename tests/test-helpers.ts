@@ -4,7 +4,7 @@ const myProbotApp = require('../src/index');
 import {Labels} from '../src/labels';
 const mockListFiles = require('./mocks/list-pull-request-files.json');
 const mockLabel = require('./mocks/label.json');
-
+const mockFileContent  = require('./mocks/file-content.json');
 const pullNumber = '31';
 const owner = 'noqcks';
 const repo = 'pull-request-size';
@@ -167,6 +167,12 @@ function nockRemoveLabelWithSize(size: string) {
     .reply(200);
 }
 
+function nockGetFileContent(fileName: string, ref: string) {
+  nock('https://api.github.com')
+    .get(`${baseURL}/contents/${fileName}?ref=${ref}`)
+    .reply(200, mockFileContent);
+}
+
 function nockInstallation(installation: string) {
   nock('https://api.github.com')
     .persist()
@@ -183,6 +189,7 @@ module.exports = {
   nockAccessToken,
   nockAddLabelToPullRequest,
   nockCreateLabel,
+  nockGetFileContent,
   nockGetLabelWithSizeNotFound,
   nockCustomLabelDoesntExist,
   nockCustomLabelFoundInRepo,

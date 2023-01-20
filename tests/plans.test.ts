@@ -1,10 +1,11 @@
-const helpers = require('./test-helpers');
-const pullRequestOpenedPayload = require('./fixtures/pull_request.opened.json');
 const marketplaceFreePlan = require('./fixtures/marketplace_free_plan.json');
 const marketplaceProPlan = require('./fixtures/marketplace_pro_plan.json');
 const plans = require('../src/plans');
+const pullRequestOpenedPayload = require('./fixtures/pull_request.opened.json');
+const helpers = require('./test-helpers');
+import { Probot } from 'probot';
 
-let probot;
+let probot: Probot;
 
 beforeAll(() => {
   helpers.initNock();
@@ -58,3 +59,5 @@ test('free Pro subscription', async () => {
   const result = await plans.isProPlan(probot, ctx);
   expect(result).toBeTruthy();
 });
+
+export {};

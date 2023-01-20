@@ -1,4 +1,4 @@
-const minimatch = require('minimatch');
+import minimatch from 'minimatch';
 
 /**
  * globMatch compares file name with file blobs to
@@ -6,15 +6,11 @@ const minimatch = require('minimatch');
  * @param file The file to compare.
  * @param globs A list of file globs to match the file.
  */
-function globMatch(file, globs) {
-  for (let i = 0; i < globs.length; i += 1) {
-    if (minimatch(file, globs[i])) {
+export function globMatch(file: string, globs: string[]) {
+  for (const glob of globs) {
+    if (minimatch(file, glob)) {
       return true;
     }
   }
   return false;
 }
-
-module.exports = {
-  globMatch,
-};

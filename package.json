@@ -38,7 +38,7 @@
     "jest": "^29.3",
     "nock": "^13.2.8",
     "nodemon": "^2.0.19",
-    "serverless-plugin-typescript": "^1.1.9",
+    "serverless-plugin-typescript": "^2.1.4",
     "smee-client": "^1.2.3",
     "standard": "^17.0.0",
     "ts-jest": "^29.0.5",

@@ -1,13 +1,11 @@
-// @ts-nocheck File not migrated fully to TS
-import {Generated} from '@noqcks/generated';
-import { isPrivateOrgRepo } from './context';
+// @ts-expect-error -- import Generated from '@noqcks/generated';
+import Generated from '@noqcks/generated';
+import { isPrivateOrgRepo, getPullRequestCommitSha } from './context';
 import { isProPlan } from './plans';
 import { globMatch } from './utils';
 import { Labels } from './labels';
 import { Probot, Context } from "probot";
-
 import { PullRequestEvent } from './types';
-
 
 const buyComment = 'Hi there :wave:\n\nUsing this App for a private organization repository requires a paid '
   + 'subscription. \n\n'
@@ -49,13 +47,13 @@ export async function hasValidSubscriptionForRepo(app: Probot, ctx: Context<Pull
   return true;
 }
 
-export async function listPullRequestFiles(ctx: Context<PullRequestEvent>, owner: string, repo: string, pullNumber: number) {
+export async function listPullRequestFiles(ctx: Context<PullRequestEvent>, owner: string, repo: string, number: number) {
   return ctx.octokit.paginate(
     ctx.octokit.pulls.listFiles,
     {
       owner,
       repo,
-      pullNumber,
+      pull_number: number,
       per_page: 100,
     },
   );
@@ -93,15 +91,16 @@ export async function getCustomGeneratedFiles(ctx: Context<PullRequestEvent>, ow
     if (response?.data !== undefined) {
       return files;
     }
-    // TODO(benji): add tests here
-    const buff = Buffer.from(response.data.content, 'base64');
-    const lines = buff.toString('ascii').split('\n');
+    if ('content' in response.data) {
+      const buff = Buffer.from(response.data['content'], 'base64');
+      const lines = buff.toString('ascii').split('\n');
 
-    lines.forEach((item) => {
-      if (item.includes('linguist-generated=true')) {
-        files.push(item.split(' ')[0]);
-      }
-    });
+      lines.forEach((item) => {
+        if (item.includes('linguist-generated=true')) {
+          files.push(item.split(' ')[0]);
+        }
+      });
+    }
     return files;
   } catch (e) {
     return files;
@@ -134,7 +133,7 @@ export async function getFileContent(ctx: Context<PullRequestEvent>, owner: stri
       return '';
     }
     if ('content' in response.data) {
-      const buff = Buffer.from(response.data.content, 'base64');
+      const buff = Buffer.from(response.data['content'], 'base64');
       return buff.toString('ascii');
     } else {
       return '';
@@ -145,17 +144,16 @@ export async function getFileContent(ctx: Context<PullRequestEvent>, owner: stri
 }
 
 export async function getAdditionsAndDeletions(ctx: Context<PullRequestEvent>, isPublicRepo: boolean) {
-  const pullNumber = ctx.payload.pull_request.number;
+  const { number } = ctx.payload.pull_request;
   const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
   let { additions, deletions } = ctx.payload.pull_request;
 
-
   // grab all pages for files modified in the pull request
-  const files = await listPullRequestFiles(ctx, owner, repo, pullNumber);
+  const files = await listPullRequestFiles(ctx, owner, repo, number);
   // get list of custom generated files as defined in .gitattributes
   const customGeneratedFiles = await getCustomGeneratedFiles(ctx, owner, repo);
 
-  const commitSha = context.getPullRequestCommitSha(ctx);
+  const commitSha = getPullRequestCommitSha(ctx);
 
   await Promise.all(files.map(async (file) => {
     let fileContent = file.patch || '';

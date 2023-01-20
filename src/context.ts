@@ -9,9 +9,9 @@ export function getRepoOwnerId(ctx: Context<PullRequestEvent>) {
   return ctx.payload.repository.owner.id;
 }
 
-// export function getPullRequest(ctx: Context<PullRequestEvent>) {
-//   return ctx.payload.pull_request;
-// }
+export function getPullRequest(ctx: Context<PullRequestEvent>) {
+  return ctx.payload.pull_request;
+}
 
 export function isPrivateOrgRepo(ctx: Context<PullRequestEvent>) {
   const { repository } = ctx.payload;

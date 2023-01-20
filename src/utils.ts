@@ -1,4 +1,4 @@
-;import minimatch from 'minimatch';
+import minimatch from 'minimatch';
 
 /**
  * globMatch compares file name with file blobs to

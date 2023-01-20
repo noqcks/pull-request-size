@@ -5,7 +5,7 @@ import { Labels, defaultLabels, generateSizeLabel } from './labels';
 import type { ApplicationFunction } from 'probot/lib/types'
 import { Context, Probot } from 'probot';
 import { handleMarketplacePurchase } from './webhooks/marketplace-purchase';
-import { PullRequestEvent } from './types';
+import { MarketplaceEvent, PullRequestEvent } from './types';
 
 const MAX_FILES = 1000;
 
@@ -27,15 +27,17 @@ const onApp: ApplicationFunction = (app: Probot) => {
     'marketplace_purchase.changed',
     'marketplace_purchase.cancelled',
     'marketplace_purchase.pending_change',
-  ], async (ctx) => {
+  ], async (ctx: Context<MarketplaceEvent>) => {
     const [account, change, plan] = await handleMarketplacePurchase(app, ctx);
-    await Sentry.captureEvent({
-      message: `Marketplace: ${change} ${plan}`,
-      extra: {
-        org: account,
-      },
-      level: 'info',
-    });
+    if (process.env.NODE_ENV !== 'test') {
+      await Sentry.captureEvent({
+        message: `Marketplace: ${change} ${plan}`,
+        extra: {
+          org: account,
+        },
+        level: 'info',
+      });
+    }
   });
 
   app.on([
@@ -76,15 +78,16 @@ const onApp: ApplicationFunction = (app: Probot) => {
 
         // custom labels stored in .github/labels.yml
         customLabels = await ctx.config('labels.yml', defaultLabels);
-      } catch (err) {
-        // catch error if the user hasn't granted permissions to this file yet
-        customLabels = defaultLabels;
+      } catch {
+        customLabels = null;
       }
 
-      const [labelColor, label] = generateSizeLabel(additions + deletions, customLabels!);
+      const labels: Labels = customLabels || defaultLabels;
+
+      const [labelColor, label] = generateSizeLabel(additions + deletions, labels);
 
       // remove any existing size label if it exists and is not the label to add
-      await removeExistingLabels(ctx, label, customLabels!);
+      await removeExistingLabels(ctx, label, labels);
 
       // assign GitHub label
       await addLabel(ctx, label, labelColor);

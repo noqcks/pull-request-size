@@ -1,4 +1,5 @@
-import Sentry from '@sentry/node';
+import * as Sentry from "@sentry/node";
+import { RewriteFrames } from "@sentry/integrations";
 import { hasValidSubscriptionForRepo, getAdditionsAndDeletions,removeExistingLabels, addLabel } from './github';
 import {blockedAccount, changedFiles, isPublicRepo} from './context';
 import { Labels, defaultLabels, generateSizeLabel } from './labels';
@@ -12,7 +13,15 @@ const MAX_FILES = 1000;
 function configureSentry(app: Probot) {
   if (process.env.SENTRY_DSN) {
     app.log('Setting up Sentry.io logging...');
-    Sentry.init({ dsn: process.env.SENTRY_DSN });
+    Sentry.init({
+      dsn: process.env.SENTRY_DSN,
+      tracesSampleRate: 1.0,
+      integrations: [
+        new RewriteFrames({
+          root: global.__dirname,
+        })
+      ],
+    });
   } else {
     app.log('Skipping Sentry.io setup');
   }

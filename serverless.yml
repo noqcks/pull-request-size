@@ -4,9 +4,6 @@ service: pr-size
 frameworkVersion: '3'
 useDotenv: true
 
-plugins:
-- serverless-plugin-typescript
-
 provider:
   name: aws
   runtime: nodejs16.x

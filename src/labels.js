@@ -1,14 +1,4 @@
-export interface Label {
-  name: string;
-  color: string;
-  lines: number;
-}
-
-export type Labels = {
-  [key in 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL']: Label
-}
-
-export const defaultLabels: Labels = {
+const labels = {
   XS: {
     name: 'size/XS',
     lines: 0,
@@ -41,16 +31,15 @@ export const defaultLabels: Labels = {
   },
 };
 
-export type ReturnLabel = [string, string];
 /**
  * generateSizeLabel will return a string label that can be assigned to a
  * GitHub Pull Request. The label is determined by the lines of code
  * in the Pull Request.
  * @param lineCount The number of lines in the Pull Request.
- * @param l The labels object
+ * @param l The label object
  * @return [string, string] The label and the color of the label.
  */
-export function generateSizeLabel(lineCount: number, l: Labels): ReturnLabel {
+function generateSizeLabel(lineCount, l) {
   if (lineCount < l.S.lines) {
     return [l.XS.color, l.XS.name];
   } if (lineCount < l.M.lines) {
@@ -65,3 +54,7 @@ export function generateSizeLabel(lineCount: number, l: Labels): ReturnLabel {
   return [l.XXL.color, l.XXL.name];
 }
 
+module.exports = {
+  labels,
+  generateSizeLabel,
+};

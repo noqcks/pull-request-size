@@ -1,11 +1,7 @@
-// @ts-expect-error -- import Generated from '@noqcks/generated';
-import Generated from '@noqcks/generated';
-import { isPrivateOrgRepo, getPullRequestCommitSha } from './context';
-import { isProPlan } from './plans';
-import { globMatch } from './utils';
-import { Labels } from './labels';
-import { Probot, Context } from "probot";
-import { PullRequestEvent } from './types';
+const Generated = require('@noqcks/generated');
+const context = require('./context');
+const plans = require('./plans');
+const utils = require('./utils');
 
 const buyComment = 'Hi there :wave:\n\nUsing this App for a private organization repository requires a paid '
   + 'subscription. \n\n'
@@ -14,13 +10,14 @@ const buyComment = 'Hi there :wave:\n\nUsing this App for a private organization
   + 'If you are a non-profit organization or otherwise can not pay for such a plan, contact me by '
   + '[creating an issue](https://github.com/noqcks/pull-request-size/issues)';
 
-export async function addBuyProComment(app: Probot, ctx: Context<PullRequestEvent>) {
-  const { pull_number, owner, repo } = ctx.pullRequest();
+async function addBuyProComment(app, ctx) {
+  const { number } = ctx.payload.pull_request;
+  const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
 
   const comments = await ctx.octokit.rest.issues.listComments({
     owner,
     repo,
-    issue_number: pull_number,
+    issue_number: number,
   });
 
   const hasBuyComment = comments.data.some((comment) => comment.body === buyComment);
@@ -28,17 +25,17 @@ export async function addBuyProComment(app: Probot, ctx: Context<PullRequestEven
     await ctx.octokit.issues.createComment({
       owner,
       repo,
-      issue_number: pull_number,
+      issue_number: number,
       body: buyComment,
     });
     app.log('Added comment to buy Pro Plan');
   }
 }
 
-export async function hasValidSubscriptionForRepo(app: Probot, ctx: Context<PullRequestEvent>) {
-  if (isPrivateOrgRepo(ctx)) {
-    const proPlan = await isProPlan(app, ctx);
-    if (!proPlan) {
+async function hasValidSubscriptionForRepo(app, ctx) {
+  if (context.isPrivateOrgRepo(ctx)) {
+    const isProPlan = await plans.isProPlan(app, ctx);
+    if (!isProPlan) {
       await addBuyProComment(app, ctx);
       return false;
     }
@@ -47,7 +44,7 @@ export async function hasValidSubscriptionForRepo(app: Probot, ctx: Context<Pull
   return true;
 }
 
-export async function listPullRequestFiles(ctx: Context<PullRequestEvent>, owner: string, repo: string, number: number) {
+async function listPullRequestFiles(ctx, owner, repo, number) {
   return ctx.octokit.paginate(
     ctx.octokit.pulls.listFiles,
     {
@@ -59,7 +56,7 @@ export async function listPullRequestFiles(ctx: Context<PullRequestEvent>, owner
   );
 }
 
-export async function ensureLabelExists(ctx: Context<PullRequestEvent>, name: string, color: string) {
+async function ensureLabelExists(ctx, name, color) {
   try {
     return await ctx.octokit.issues.getLabel(ctx.repo({
       name,
@@ -72,44 +69,39 @@ export async function ensureLabelExists(ctx: Context<PullRequestEvent>, name: st
   }
 }
 
-export async function addLabel(ctx: Context<PullRequestEvent>, name: string, color: string) {
+async function addLabel(ctx, name, color) {
   const params = { ...ctx.issue(), labels: [name] };
 
   await ensureLabelExists(ctx, name, color);
   await ctx.octokit.issues.addLabels(params);
 }
 
-export async function getCustomGeneratedFiles(ctx: Context<PullRequestEvent>, owner: string, repo: string) {
+async function getCustomGeneratedFiles(ctx, owner, repo) {
   // TODO(benji): add a GitHub comment to the PR if the .gitattributes configuration is
   // invalid
-  const files: string[] = [];
+  const files = [];
   const path = '.gitattributes';
 
   let response;
   try {
     response = await ctx.octokit.repos.getContent({ owner, repo, path });
-    if (response?.data !== undefined) {
-      return files;
-    }
-    if ('content' in response.data) {
-      const buff = Buffer.from(response.data['content'], 'base64');
-      const lines = buff.toString('ascii').split('\n');
+    const buff = Buffer.from(response.data.content, 'base64');
+    const lines = buff.toString('ascii').split('\n');
 
-      lines.forEach((item) => {
-        if (item.includes('linguist-generated=true')) {
-          files.push(item.split(' ')[0]);
-        }
-      });
-    }
+    lines.forEach((item) => {
+      if (item.includes('linguist-generated=true')) {
+        files.push(item.split(' ')[0]);
+      }
+    });
     return files;
   } catch (e) {
     return files;
   }
 }
 
-export async function removeExistingLabels(ctx: Context<PullRequestEvent>, label: string, customLabels: Labels) {
+async function removeExistingLabels(ctx, label, customLabels) {
   ctx.payload.pull_request.labels.forEach((prLabel) => {
-    const labelNames = Object.values(customLabels).map(item => item.name);
+    const labelNames = Object.keys(customLabels).map((key) => customLabels[key].name);
     if (labelNames.includes(prLabel.name)) {
       if (prLabel.name !== label) {
         ctx.octokit.issues.removeLabel(ctx.issue({
@@ -120,7 +112,7 @@ export async function removeExistingLabels(ctx: Context<PullRequestEvent>, label
   });
 }
 
-export async function getFileContent(ctx: Context<PullRequestEvent>, owner: string, repo: string, filename: string, ref: string) {
+async function getFileContent(ctx, owner, repo, filename, ref) {
   let response;
   try {
     response = await ctx.octokit.repos.getContent({
@@ -129,21 +121,14 @@ export async function getFileContent(ctx: Context<PullRequestEvent>, owner: stri
       path: filename,
       ref,
     });
-    if (response?.data === undefined) {
-      return '';
-    }
-    if ('content' in response.data) {
-      const buff = Buffer.from(response.data['content'], 'base64');
-      return buff.toString('ascii');
-    } else {
-      return '';
-    }
+    const buff = Buffer.from(response.data.content, 'base64');
+    return buff.toString('ascii');
   } catch (e) {
     return '';
   }
 }
 
-export async function getAdditionsAndDeletions(ctx: Context<PullRequestEvent>, isPublicRepo: boolean) {
+async function getAdditionsAndDeletions(app, ctx, isPublicRepo) {
   const { number } = ctx.payload.pull_request;
   const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
   let { additions, deletions } = ctx.payload.pull_request;
@@ -153,7 +138,7 @@ export async function getAdditionsAndDeletions(ctx: Context<PullRequestEvent>, i
   // get list of custom generated files as defined in .gitattributes
   const customGeneratedFiles = await getCustomGeneratedFiles(ctx, owner, repo);
 
-  const commitSha = getPullRequestCommitSha(ctx);
+  const commitSha = context.getPullRequestCommitSha(ctx);
 
   await Promise.all(files.map(async (file) => {
     let fileContent = file.patch || '';
@@ -165,10 +150,19 @@ export async function getAdditionsAndDeletions(ctx: Context<PullRequestEvent>, i
     }
     const g = new Generated(file.filename, fileContent);
     // if files are generated, remove them from the additions/deletions total
-    if (globMatch(file.filename, customGeneratedFiles) || g.isGenerated()) {
+    if (utils.globMatch(file.filename, customGeneratedFiles) || g.isGenerated()) {
       additions -= file.additions;
       deletions -= file.deletions;
     }
   }));
   return [additions, deletions];
 }
+
+module.exports = {
+  removeExistingLabels,
+  addLabel,
+  listPullRequestFiles,
+  getCustomGeneratedFiles,
+  hasValidSubscriptionForRepo,
+  getAdditionsAndDeletions,
+};

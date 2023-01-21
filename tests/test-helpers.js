@@ -1,52 +1,26 @@
 const nock = require('nock');
 const { Probot, ProbotOctokit } = require('probot');
 const myProbotApp = require('../src/index');
-import {Labels} from '../src/labels';
 const mockListFiles = require('./mocks/list-pull-request-files.json');
 const mockLabel = require('./mocks/label.json');
-const mockFileContent  = require('./mocks/file-content.json');
+
 const pullNumber = '31';
 const owner = 'noqcks';
 const repo = 'pull-request-size';
 const baseURL = `/repos/${owner}/${repo}`;
 const baseUrlDotGitHub = `/repos/${owner}/.github`;
 
-const label: {[key: string]: string}= {
+const label = {
   xsmall: 'size%2FXS',
   small: 'size%2FS',
   medium: 'size%2FM',
 };
 
-const confCustomNameSLabel: Labels = {
-  XS: {
-    name: 'customxsmall',
-    lines: 5,
-    color: '3CBF00',
-  },
+const confCustomNameSLabel = {
   S: {
     name: 'customsmall',
     lines: 10,
     color: '5D9801',
-  },
-  M: {
-    name: 'custommedium',
-    lines: 30,
-    color: '7F7203',
-  },
-  L: {
-    name: 'customlarge',
-    lines: 100,
-    color: 'A14C05',
-  },
-  XL: {
-    name: 'customxlarge',
-    lines: 500,
-    color: 'C32607',
-  },
-  XXL: {
-    name: 'customxxlarge',
-    lines: 1000,
-    color: 'E50009',
   },
 };
 
@@ -60,8 +34,8 @@ const confOnlyMLabel = {
 
 function initNock() {
   nock.disableNetConnect();
-  const logRequest = (r: any) => console.log(`No match: ${r.path}, method: ${r.method}, host: ${r.options.host}`);
-  nock.emitter.on('no match', (req: string) => {
+  const logRequest = (r) => console.log(`No match: ${r.path}, method: ${r.method}, host: ${r.options.host}`);
+  nock.emitter.on('no match', (req) => {
     logRequest(req);
   });
 }
@@ -143,13 +117,13 @@ function nockCreateLabel() {
     .reply(201, mockLabel);
 }
 
-function nockGetLabelWithSizeNotFound(size: string) {
+function nockGetLabelWithSizeNotFound(size) {
   nock('https://api.github.com')
     .get(`${baseURL}/labels/${label[size]}`)
     .reply(404);
 }
 
-function nockGetLabelWithSize(size: string) {
+function nockGetLabelWithSize(size) {
   nock('https://api.github.com')
     .get(`${baseURL}/labels/${label[size]}`)
     .reply(200, mockLabel);
@@ -161,19 +135,13 @@ function nockAddLabelToPullRequest() {
     .reply(200, [label]);
 }
 
-function nockRemoveLabelWithSize(size: string) {
+function nockRemoveLabelWithSize(size) {
   nock('https://api.github.com')
     .delete(`${baseURL}/issues/${pullNumber}/labels/${label[size]}`)
     .reply(200);
 }
 
-function nockGetFileContent(fileName: string, ref: string) {
-  nock('https://api.github.com')
-    .get(`${baseURL}/contents/${fileName}?ref=${ref}`)
-    .reply(200, mockFileContent);
-}
-
-function nockInstallation(installation: string) {
+function nockInstallation(installation) {
   nock('https://api.github.com')
     .persist()
     .get('/users/noqcks/installation')
@@ -189,7 +157,6 @@ module.exports = {
   nockAccessToken,
   nockAddLabelToPullRequest,
   nockCreateLabel,
-  nockGetFileContent,
   nockGetLabelWithSizeNotFound,
   nockCustomLabelDoesntExist,
   nockCustomLabelFoundInRepo,

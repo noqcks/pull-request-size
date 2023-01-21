@@ -1,7 +1,4 @@
-import { MarketplaceEvent } from "../types";
-import { Context, Probot } from 'probot';
-
-function getChangeEmoji(action: string, plan: any, previous: any): string {
+function getChangeEmoji(action, plan, previous) {
   switch (action) {
     case 'purchased':
       return '✅';
@@ -12,7 +9,7 @@ function getChangeEmoji(action: string, plan: any, previous: any): string {
   }
 }
 
-async function handleMarketplacePurchase(app: Probot, ctx: Context<MarketplaceEvent>) {
+async function handle(app, ctx) {
   const {
     action, marketplace_purchase: { account, plan }, previous_marketplace_purchase: previous,
   } = ctx.payload;
@@ -22,4 +19,6 @@ async function handleMarketplacePurchase(app: Probot, ctx: Context<MarketplaceEv
   return [account.login, change, plan.name];
 }
 
-export { handleMarketplacePurchase }
+module.exports = {
+  handle,
+};

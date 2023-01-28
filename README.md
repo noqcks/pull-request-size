@@ -98,7 +98,7 @@ Size Comments are comments made on the size of a pull request. By default, Pull 
 will not add any comments to a pull request. However, you can enable comments by adding
 a comment to a label in the `.github/labels.yml` file.
 
-Any comment that is not empty wil be added to the pull request. Leave this field empty
+Any comment that is not empty wil be added to the pull request. Leave this key empty
 to disable comments for a size.
 
 ```

@@ -42,7 +42,7 @@ To get around GitHub billing limitations, we also offer payment via Stripe invoi
 
 1. Sign up for the Free plan on the [GitHub Marketplace listing](https://github.com/marketplace/pull-request-size)
 2. Send an email to benji@093b.org with a `company name`, `email of a billing contact`, and the `name of your GitHub Organization`. Please indicate whether you would like a yearly or monthly invoice.
-3. Once the Stripe invoice has been paid, you will be added to Pro plan. 
+3. Once the Stripe invoice has been paid, you will be added to Pro plan.
 
 ## Configuration
 
@@ -90,6 +90,25 @@ XXL:
   name: size/XXL
   lines: 1000
   color: E50009
+```
+
+### Size Comments
+
+Size Comments are comments made on the size of a pull request. By default, Pull Request Size
+will not add any comments to a pull request. However, you can enable comments by adding
+a comment to a label in the `.github/labels.yml` file.
+
+Any comment that is not empty wil be added to the pull request. Leave this field empty
+to disable comments for a size.
+
+```
+XXL:
+  name: size/XXL
+  lines: 1000
+  color: E50009
+  comment: |
+    # Whoa! Easy there, Partner!
+    This PR is too big. Please break it up into smaller PRs.
 ```
 
 ## Feedback, suggestions and bug reports

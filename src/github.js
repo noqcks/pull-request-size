@@ -22,14 +22,20 @@ async function addBuyProComment(app, ctx) {
 
   const hasBuyComment = comments.data.some((comment) => comment.body === buyComment);
   if (!hasBuyComment) {
-    await ctx.octokit.issues.createComment({
-      owner,
-      repo,
-      issue_number: number,
-      body: buyComment,
-    });
+    addComment(ctx, buyComment)
     app.log('Added comment to buy Pro Plan');
   }
+}
+
+async function addComment(ctx, comment) {
+  const { number } = ctx.payload.pull_request;
+  const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
+  await ctx.octokit.issues.createComment({
+    owner,
+    repo,
+    issue_number: number,
+    body: comment,
+  });
 }
 
 async function hasValidSubscriptionForRepo(app, ctx) {
@@ -160,6 +166,7 @@ async function getAdditionsAndDeletions(app, ctx, isPublicRepo) {
 
 module.exports = {
   removeExistingLabels,
+  addComment,
   addLabel,
   listPullRequestFiles,
   getCustomGeneratedFiles,

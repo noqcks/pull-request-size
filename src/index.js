@@ -83,6 +83,15 @@ module.exports = (app) => {
 
       // assign GitHub label
       await github.addLabel(ctx, label, labelColor);
+
+      // add comment to PR if it exists
+      for (const key in customLabels) {
+        if (customLabels[key].name === label) {
+          if ('comment' in customLabels[key]) {
+            await github.addCommentIfDoesntExist(ctx, customLabels[key].comment);
+          }
+        }
+      }
     }
   });
 };

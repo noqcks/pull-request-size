@@ -3,6 +3,7 @@ const { Probot, ProbotOctokit } = require('probot');
 const myProbotApp = require('../src/index');
 const mockListFiles = require('./mocks/list-pull-request-files.json');
 const mockLabel = require('./mocks/label.json');
+const mockListPRComments = require('./mocks/list-pr-comments.json');
 
 const pullNumber = '31';
 const owner = 'noqcks';
@@ -14,14 +15,6 @@ const label = {
   xsmall: 'size%2FXS',
   small: 'size%2FS',
   medium: 'size%2FM',
-};
-
-const confCustomNameSLabel = {
-  S: {
-    name: 'customsmall',
-    lines: 10,
-    color: '5D9801',
-  },
 };
 
 const confOnlyMLabel = {
@@ -87,10 +80,10 @@ function nockNoLabelymlFoundInUsersGithubRepo() {
     .reply(404);
 }
 
-function nockCustomLabelFoundInRepo() {
+function nockCustomLabelFoundInRepo(customLabelYml) {
   nock('https://api.github.com')
     .get(`${baseURL}/contents/.github%2Flabels.yml`)
-    .reply(200, JSON.stringify(confCustomNameSLabel));
+    .reply(200, JSON.stringify(customLabelYml));
 }
 
 function nockCustomLabelFoundInUserRepo() {
@@ -99,9 +92,9 @@ function nockCustomLabelFoundInUserRepo() {
     .reply(200, JSON.stringify(confOnlyMLabel));
 }
 
-function nockCustomLabelDoesntExist() {
+function nockCustomLabelDoesntExist(labelName) {
   nock('https://api.github.com')
-    .get(`${baseURL}/labels/${confCustomNameSLabel.S.name}`)
+    .get(`${baseURL}/labels/${labelName}`)
     .reply(404);
 }
 
@@ -147,6 +140,17 @@ function nockInstallation(installation) {
     .get('/users/noqcks/installation')
     .reply(200, installation);
 }
+function nockListPRComments() {
+  nock('https://api.github.com')
+    .get(`${baseURL}/issues/${pullNumber}/comments`)
+    .reply(200, mockListPRComments);
+}
+
+function nockCreatePRComment(comment) {
+  nock('https://api.github.com')
+    .post(`${baseURL}/issues/${pullNumber}/comments`)
+    .reply(200, comment);
+}
 
 module.exports = {
   baseURL,
@@ -156,6 +160,8 @@ module.exports = {
   initProbot,
   nockAccessToken,
   nockAddLabelToPullRequest,
+  nockCreatePRComment,
+  nockListPRComments,
   nockCreateLabel,
   nockGetLabelWithSizeNotFound,
   nockCustomLabelDoesntExist,

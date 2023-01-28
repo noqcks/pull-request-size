@@ -7,6 +7,23 @@ const mockLabel = require('./mocks/label.json');
 
 let probot;
 
+const confCustomNameSLabelComment = {
+  S: {
+    name: 'customsmall',
+    lines: 10,
+    color: '5D9801',
+    comment: 'this PR is small',
+  },
+};
+
+const confCustomNameSLabelNoComment = {
+  S: {
+    name: 'customsmall',
+    lines: 10,
+    color: '5D9801',
+  },
+};
+
 beforeAll(() => {
   helpers.initNock();
 });
@@ -96,13 +113,81 @@ test('creates a label when a pull request is synchronized', async () => {
   expect(nock.isDone()).toBeTruthy();
 });
 
+test('doesnt add comment on PR when custom comment is not defined', async () => {
+  helpers.nockListPullRequestFiles();
+  helpers.nockGetCustomGeneratedFilesNotFound();
+  helpers.nockCustomLabelFoundInRepo(confCustomNameSLabelNoComment);
+  helpers.nockCustomLabelDoesntExist(confCustomNameSLabelNoComment.S.name);
+
+  nock('https://api.github.com')
+    // create the custom label
+    .post(`${helpers.baseURL}/labels`, (body) => {
+      expect(body).toStrictEqual({ name: 'customsmall', color: '5D9801' });
+      return true;
+    })
+    .reply(201)
+    // addLabels and verify custom name
+    .post(`${helpers.baseURL}/issues/${helpers.pullNumber}/labels`, (body) => {
+      expect(body).toStrictEqual({ labels: ['customsmall'] });
+      return true;
+    })
+    .reply(200);
+
+  // Simulates delivery of an pull_request.opened webhook
+  await probot.receive({
+    name: 'pull_request.opened',
+    payload: prOpenedPayload,
+  });
+  if (!nock.isDone()) {
+    throw new Error(
+      `Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`,
+    );
+  }
+  expect(nock.isDone()).toBeTruthy();
+});
+
+test('adds comment on PR when custom comment is defined', async () => {
+  helpers.nockListPullRequestFiles();
+  helpers.nockGetCustomGeneratedFilesNotFound();
+  helpers.nockCustomLabelFoundInRepo(confCustomNameSLabelComment);
+  helpers.nockCustomLabelDoesntExist(confCustomNameSLabelComment.S.name);
+  helpers.nockListPRComments();
+  helpers.nockCreatePRComment('this PR is small');
+
+  nock('https://api.github.com')
+    // create the custom label
+    .post(`${helpers.baseURL}/labels`, (body) => {
+      expect(body).toStrictEqual({ name: 'customsmall', color: '5D9801' });
+      return true;
+    })
+    .reply(201)
+    // addLabels and verify custom name
+    .post(`${helpers.baseURL}/issues/${helpers.pullNumber}/labels`, (body) => {
+      expect(body).toStrictEqual({ labels: ['customsmall'] });
+      return true;
+    })
+    .reply(200);
+
+  // Simulates delivery of an pull_request.opened webhook
+  await probot.receive({
+    name: 'pull_request.opened',
+    payload: prOpenedPayload,
+  });
+  if (!nock.isDone()) {
+    throw new Error(
+      `Not all nock interceptors were used: ${JSON.stringify(nock.pendingMocks())}`,
+    );
+  }
+  expect(nock.isDone()).toBeTruthy();
+});
+
 test('verify custom labels from current repo takes precedence to the default ones', async () => {
   helpers.nockListPullRequestFiles();
   helpers.nockGetCustomGeneratedFilesNotFound();
-  helpers.nockCustomLabelFoundInRepo();
+  helpers.nockCustomLabelFoundInRepo(confCustomNameSLabelNoComment);
   helpers.nockNoLabelymlFoundInUsersGithubRepo();
   // get label will return 404 for a non-existing label
-  helpers.nockCustomLabelDoesntExist();
+  helpers.nockCustomLabelDoesntExist(confCustomNameSLabelNoComment.S.name);
 
   nock('https://api.github.com')
     // create the custom label

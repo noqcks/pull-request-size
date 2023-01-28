@@ -10,25 +10,22 @@ const buyComment = 'Hi there :wave:\n\nUsing this App for a private organization
   + 'If you are a non-profit organization or otherwise can not pay for such a plan, contact me by '
   + '[creating an issue](https://github.com/noqcks/pull-request-size/issues)';
 
-async function addBuyProComment(app, ctx) {
+async function addCommentIfDoesntExist(ctx, comment) {
   const { number } = ctx.payload.pull_request;
   const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
-
   const comments = await ctx.octokit.rest.issues.listComments({
     owner,
     repo,
     issue_number: number,
   });
-
-  const hasBuyComment = comments.data.some((comment) => comment.body === buyComment);
-  if (!hasBuyComment) {
+  const hasCommentAlready = comments.data.some((c) => c.body === comment);
+  if (!hasCommentAlready) {
     await ctx.octokit.issues.createComment({
       owner,
       repo,
       issue_number: number,
-      body: buyComment,
+      body: comment,
     });
-    app.log('Added comment to buy Pro Plan');
   }
 }
 
@@ -36,7 +33,8 @@ async function hasValidSubscriptionForRepo(app, ctx) {
   if (context.isPrivateOrgRepo(ctx)) {
     const isProPlan = await plans.isProPlan(app, ctx);
     if (!isProPlan) {
-      await addBuyProComment(app, ctx);
+      await addCommentIfDoesntExist(ctx, buyComment);
+      app.log('Added comment to buy Pro Plan');
       return false;
     }
     return true;
@@ -160,6 +158,7 @@ async function getAdditionsAndDeletions(app, ctx, isPublicRepo) {
 
 module.exports = {
   removeExistingLabels,
+  addCommentIfDoesntExist,
   addLabel,
   listPullRequestFiles,
   getCustomGeneratedFiles,

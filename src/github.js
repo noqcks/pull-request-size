@@ -10,6 +10,17 @@ const buyComment = 'Hi there :wave:\n\nUsing this App for a private organization
   + 'If you are a non-profit organization or otherwise can not pay for such a plan, contact me by '
   + '[creating an issue](https://github.com/noqcks/pull-request-size/issues)';
 
+async function addComment(ctx, comment) {
+  const { number } = ctx.payload.pull_request;
+  const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
+  await ctx.octokit.issues.createComment({
+    owner,
+    repo,
+    issue_number: number,
+    body: comment,
+  });
+}
+
 async function addBuyProComment(app, ctx) {
   const { number } = ctx.payload.pull_request;
   const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
@@ -22,20 +33,9 @@ async function addBuyProComment(app, ctx) {
 
   const hasBuyComment = comments.data.some((comment) => comment.body === buyComment);
   if (!hasBuyComment) {
-    addComment(ctx, buyComment)
+    addComment(ctx, buyComment);
     app.log('Added comment to buy Pro Plan');
   }
-}
-
-async function addComment(ctx, comment) {
-  const { number } = ctx.payload.pull_request;
-  const { owner: { login: owner }, name: repo } = ctx.payload.pull_request.base.repo;
-  await ctx.octokit.issues.createComment({
-    owner,
-    repo,
-    issue_number: number,
-    body: comment,
-  });
 }
 
 async function hasValidSubscriptionForRepo(app, ctx) {

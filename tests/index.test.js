@@ -117,7 +117,7 @@ test('doesnt add comment on PR when custom comment is not defined', async () => 
   helpers.nockListPullRequestFiles();
   helpers.nockGetCustomGeneratedFilesNotFound();
   helpers.nockCustomLabelFoundInRepo(confCustomNameSLabelNoComment);
-  helpers.nockCustomLabelDoesntExist();
+  helpers.nockCustomLabelDoesntExist(confCustomNameSLabelNoComment.S.name);
 
   nock('https://api.github.com')
     // create the custom label
@@ -150,7 +150,7 @@ test('adds comment on PR when custom comment is defined', async () => {
   helpers.nockListPullRequestFiles();
   helpers.nockGetCustomGeneratedFilesNotFound();
   helpers.nockCustomLabelFoundInRepo(confCustomNameSLabelComment);
-  helpers.nockCustomLabelDoesntExist();
+  helpers.nockCustomLabelDoesntExist(confCustomNameSLabelComment.S.name);
   helpers.nockListPRComments();
   helpers.nockCreatePRComment('this PR is small');
 
@@ -187,7 +187,7 @@ test('verify custom labels from current repo takes precedence to the default one
   helpers.nockCustomLabelFoundInRepo(confCustomNameSLabelNoComment);
   helpers.nockNoLabelymlFoundInUsersGithubRepo();
   // get label will return 404 for a non-existing label
-  helpers.nockCustomLabelDoesntExist();
+  helpers.nockCustomLabelDoesntExist(confCustomNameSLabelNoComment.S.name);
 
   nock('https://api.github.com')
     // create the custom label

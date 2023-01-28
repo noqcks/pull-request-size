@@ -92,9 +92,9 @@ function nockCustomLabelFoundInUserRepo() {
     .reply(200, JSON.stringify(confOnlyMLabel));
 }
 
-function nockCustomLabelDoesntExist() {
+function nockCustomLabelDoesntExist(labelName) {
   nock('https://api.github.com')
-    .get(`${baseURL}/labels/${confCustomNameSLabel.S.name}`)
+    .get(`${baseURL}/labels/${labelName}`)
     .reply(404);
 }
 

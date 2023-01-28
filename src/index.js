@@ -85,9 +85,12 @@ module.exports = (app) => {
       await github.addLabel(ctx, label, labelColor);
 
       // add comment to PR if it exists
-      const labelKey = label.split('/')[1]
-      if (labelKey in customLabels && 'comment' in customLabels[labelKey]) {
-        await github.addComment(ctx, customLabels[labelKey].comment);
+      for (const key in customLabels) {
+        if (customLabels[key].name === label) {
+          if ('comment' in customLabels[key]) {
+            await github.addCommentIfDoesntExist(ctx, customLabels[key].comment);
+          }
+        }
       }
     }
   });

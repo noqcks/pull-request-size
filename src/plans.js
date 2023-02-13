@@ -7,7 +7,7 @@ function freeProSubscription(login) {
 }
 
 function invoicedProSubscription(login) {
-  const organizations = ['pace-int', 'honestbank'];
+  const organizations = ['pace-int', 'honestbank', 'MacPaw'];
   const match = organizations.find((o) => o.toLowerCase() === String(login).toLowerCase());
   return match !== undefined;
 }

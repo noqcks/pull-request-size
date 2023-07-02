@@ -21,7 +21,7 @@
   "dependencies": {
     "@noqcks/generated": "^7.23.0",
     "@probot/adapter-aws-lambda-serverless": "^3.0.2",
-    "@sentry/node": "^7.45.0",
+    "@sentry/node": "^7.46.0",
     "minimatch": "^5.1.6",
     "probot": "^12.3.0",
     "serverless": "^3.30.0"

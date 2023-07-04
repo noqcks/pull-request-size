@@ -24,7 +24,7 @@
     "@sentry/node": "^7.46.0",
     "minimatch": "^5.1.6",
     "probot": "^12.3.0",
-    "serverless": "^3.30.0"
+    "serverless": "^3.32.2"
   },
   "devDependencies": {
     "eslint": "^8.26.0",

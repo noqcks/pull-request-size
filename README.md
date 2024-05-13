@@ -1,11 +1,14 @@
-# Pull Request Size <img src="static/logo.png" alt="drawing" width="38"/>
+# Pull Request Size <img src="static/logo.png" alt="logo" width="38">
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Sentry](https://img.shields.io/badge/sentry-enabled-green)](https://sentry.io) [![Build Status](https://github.com/noqcks/pull-request-size/workflows/Test/badge.svg)](https://github.com/noqcks/pull-request-size/actions) [![codecov](https://codecov.io/gh/noqcks/pull-request-size/branch/master/graph/badge.svg?token=qw3AMD6G8H)](https://codecov.io/gh/noqcks/pull-request-size) [![Dependabot](https://badgen.net/badge/Dependabot/enabled/green?icon=dependabot)](https://dependabot.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Sentry](https://img.shields.io/badge/sentry-enabled-green)](https://sentry.io)
+[![Build Status](https://github.com/noqcks/pull-request-size/workflows/Test/badge.svg)](https://github.com/noqcks/pull-request-size/actions)
+[![codecov](https://codecov.io/gh/noqcks/pull-request-size/branch/master/graph/badge.svg?token=qw3AMD6G8H)](https://codecov.io/gh/noqcks/pull-request-size)
+[![Dependabot](https://badgen.net/badge/Dependabot/enabled/green?icon=dependabot)](https://dependabot.com/)
 
 Pull Request Size is a GitHub App that applies `size/*` labels to Pull Requests based on the total lines of code changed (additions and deletions).
 
-<img width="767" alt="screen shot 2018-11-01 at 10 42 27 am" src="https://user-images.githubusercontent.com/4740147/47858607-d7e05f80-ddc2-11e8-97d9-247033cc9a12.png">
-
+<img width="767" alt="pull request comment" src="https://user-images.githubusercontent.com/4740147/47858607-d7e05f80-ddc2-11e8-97d9-247033cc9a12.png">
 
 ## Install
 
@@ -13,6 +16,7 @@ Pull Request Size is a GitHub App that applies `size/*` labels to Pull Requests 
 
 _This app is free to use for personal and public organization repos. There is a paid plan for
 use with private organization repos._
+
 ## Sizing
 
 | Name | Description |
@@ -48,6 +52,7 @@ To get around GitHub billing limitations, we also offer payment via Stripe invoi
 
 This app requires no configuration out of the box. However, you can exclude certain files
 from being counted towards a PR's size, and you can add custom labels in Github.
+
 ### Excluding Files
 
 If you have files that you would not like to be included in the calculation for a Pull Request's size, you can modify the `.gitattributes` file with the flag `linguist-generated=true` on your file or file pattern.
@@ -58,14 +63,13 @@ For example to mark all `.meta` files as generated, add this line to `.gitattrib
 *.meta linguist-generated=true
 ```
 
-A `.gitattributes` file uses the same rules for matching as `.gitignore` files. See [GitHub documenation](https://docs.github.com/en/github/administering-a-repository/managing-repository-settings/customizing-how-changed-files-appear-on-github) on the linguist-generated flag for more info.
-
+A `.gitattributes` file uses the same rules for matching as `.gitignore` files. See [GitHub documentation](https://docs.github.com/en/github/administering-a-repository/managing-repository-settings/customizing-how-changed-files-appear-on-github) on the linguist-generated flag for more info.
 
 ### Custom Labels
 
 You can set custom label names and colors by checking in the file `.github/labels.yml` to every repository you'd like to customize
 
-```
+```yaml
 XS:
   name: size/XS
   lines: 0
@@ -101,7 +105,7 @@ a comment to a label in the `.github/labels.yml` file.
 Any comment that is not empty wil be added to the pull request. Leave this key empty
 to disable comments for a size.
 
-```
+```yaml
 XXL:
   name: size/XXL
   lines: 1000

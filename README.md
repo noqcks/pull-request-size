@@ -59,7 +59,7 @@ If you have files that you would not like to be included in the calculation for 
 
 For example to mark all `.meta` files as generated, add this line to `.gitattributes`
 
-```
+```gitattributes
 *.meta linguist-generated=true
 ```
 

@@ -23,7 +23,7 @@
     "@probot/adapter-aws-lambda-serverless": "^3.0.2",
     "@sentry/node": "^7.58.0",
     "minimatch": "^5.1.6",
-    "probot": "^12.3.1",
+    "probot": "^12.3.4",
     "serverless": "^3.33.0"
   },
   "devDependencies": {

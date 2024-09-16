@@ -1,7 +1,7 @@
 const context = require('./context');
 
 function freeProSubscription(login) {
-  const organizations = ['AdaSupport', 'one-acre-fund'];
+  const organizations = ['AdaSupport', 'one-acre-fund', 'ReadyOn-Inc'];
   const match = organizations.find((o) => o.toLowerCase() === String(login).toLowerCase());
   return match !== undefined;
 }

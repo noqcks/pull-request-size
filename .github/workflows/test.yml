@@ -16,6 +16,3 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      - uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}

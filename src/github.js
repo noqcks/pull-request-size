@@ -87,7 +87,7 @@ async function getCustomGeneratedFiles(ctx, owner, repo) {
     const lines = buff.toString('ascii').split('\n');
 
     lines.forEach((item) => {
-      if (item.includes('linguist-generated=true')) {
+      if (/linguist-generated(?:=true)?\b(?!=false)/.test(item)) {
         files.push(item.split(' ')[0]);
       }
     });

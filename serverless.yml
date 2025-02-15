@@ -1,12 +1,10 @@
 org: noqcks
 app: pr-size
 service: pr-size
-frameworkVersion: '3'
-useDotenv: true
 
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: nodejs22.x
   environment:
     APP_ID: ${env:APP_ID}
     PRIVATE_KEY: ${env:PRIVATE_KEY}
@@ -21,15 +19,17 @@ functions:
     handler: src/handler.webhooks
     timeout: 25
     memorySize: 256
-    provisionedConcurrency: 1
     events:
       - httpApi:
           path: /api/github/webhooks
           method: post
 
 package:
+  individually: true
   patterns:
     - '!tests/**'
     - '!coverage/**'
     - '!.github/**'
     - '!*.pem'
+    - '!**/*.test.ts'
+    - '!**/*.spec.ts'

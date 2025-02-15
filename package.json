@@ -1,67 +1,51 @@
 {
   "name": "size",
-  "version": "1.1.0",
+  "type": "module",
+  "version": "2.0.0",
   "description": "Applies size labels to Pull Requests",
   "author": "Benji Visser <benji@093b.org>",
   "license": "MIT",
-  "repository": "https://github.com/noqcks/size.git",
-  "homepage": "https://github.com/noqcks/size",
-  "bugs": "https://github.com/noqcks/size/issues",
+  "repository": "https://github.com/noqcks/pull-request-size.git",
+  "homepage": "https://github.com/noqcks/pull-request-size",
+  "bugs": "https://github.com/noqcks/pull-request-size/issues",
   "keywords": [
     "probot",
     "github",
     "probot-app"
   ],
+  "packageManager": "pnpm@9.15.4",
   "scripts": {
-    "dev": "nodemon",
-    "start": "probot run ./src/index.js",
-    "lint": "standard --fix",
-    "test": "jest"
+    "build": "tsc",
+    "lint": "eslint .",
+    "dev": "probot run ./lib/index.js",
+    "test": "vitest"
   },
   "dependencies": {
-    "@noqcks/generated": "^7.23.0",
-    "@probot/adapter-aws-lambda-serverless": "^3.0.2",
-    "@sentry/node": "^7.120.0",
-    "minimatch": "^5.1.6",
-    "probot": "^12.3.1",
-    "serverless": "^3.33.0"
+    "@noqcks/generated": "^8.0.5",
+    "@probot/adapter-aws-lambda-serverless": "^4.0.2",
+    "@sentry/node": "^9.1.0",
+    "minimatch": "^10.0.1",
+    "probot": "^13.4.3",
+    "serverless": "^4.6.2",
+    "supertest": "^7.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.26.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-google": "^0.14.0",
-    "eslint-plugin-import": "^2.26.0",
-    "jest": "^28.1.2",
-    "nock": "^13.2.8",
-    "nodemon": "^2.0.19",
-    "smee-client": "^1.2.3",
-    "standard": "^17.0.0"
+    "@eslint/js": "^9.20.0",
+    "@octokit/webhooks": "^13.6.1",
+    "@octokit/webhooks-types": "^7.6.1",
+    "@types/aws-lambda": "^8.10.147",
+    "@types/node": "^22.13.4",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
+    "eslint": "^9.20.1",
+    "eslint-plugin-import": "^2.31.0",
+    "globals": "^15.15.0",
+    "nock": "^14.0.1",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.24.0",
+    "vitest": "^3.0.5"
   },
   "engines": {
-    "node": ">= 16.0.0"
-  },
-  "standard": {
-    "env": [
-      "jest"
-    ]
-  },
-  "nodemonConfig": {
-    "exec": "npm start",
-    "watch": [
-      ".env",
-      "."
-    ]
-  },
-  "jest": {
-    "coverageDirectory": "./coverage/",
-    "testEnvironment": "node",
-    "collectCoverage": true,
-    "coverageThreshold": {
-      "global": {
-        "branches": 60,
-        "functions": 60,
-        "lines": 60
-      }
-    }
+    "node": ">= 22.0.0"
   }
 }

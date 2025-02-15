@@ -33,6 +33,8 @@ Pull Request Size calculates the size of a PR as
 total additions + total deletions - (all generated¹ file additions/deletions)
 ```
 
+**Note:** For private repositories, only the filename is used to determine if a file is generated, while public repositories also analyze file contents. This limitation exists because the app does not request file content read permissions for private repositories.
+
 ¹ A generated file is either one of the standard generated files as defined in [noqcks/generated](https://github.com/noqcks/generated/blob/master/lib/generated.js) or defined with `linguist-generated=true` in a `.gitattributes` file.
 
 ## Billing Issues

@@ -15,7 +15,7 @@
   ],
   "packageManager": "pnpm@9.15.4",
   "scripts": {
-    "build": "tsc --outDir public",
+    "build": "tsc",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "dev": "probot run ./lib/index.js",
@@ -23,18 +23,15 @@
   },
   "dependencies": {
     "@noqcks/generated": "^8.0.5",
-    "@probot/adapter-aws-lambda-serverless": "^4.0.2",
     "@sentry/node": "^9.1.0",
     "minimatch": "^10.0.1",
     "probot": "^13.4.3",
-    "serverless": "^4.6.2",
     "supertest": "^7.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
     "@octokit/webhooks": "^13.6.1",
     "@octokit/webhooks-types": "^7.6.1",
-    "@types/aws-lambda": "^8.10.147",
     "@types/node": "^22.13.4",
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.24.0",

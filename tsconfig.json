@@ -8,9 +8,12 @@
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "Bundler",
+    "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": true,
-    "outDir": "public",
-    "noEmit": false
+    "noImplicitAny": true,
+    "outDir": "./dist",
+    "noEmit": false,
+    "incremental": true
   },
   "exclude": ["node_modules", "dist", "lib", "tests"],
   "include": ["src/**/*.ts"]

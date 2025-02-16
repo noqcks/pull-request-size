@@ -20,11 +20,11 @@
   },
   "dependencies": {
     "@noqcks/generated": "^7.23.0",
-    "@probot/adapter-aws-lambda-serverless": "^3.0.2",
+    "@probot/adapter-aws-lambda-serverless": "^4.0.0",
     "@sentry/node": "^7.120.0",
     "minimatch": "^5.1.6",
-    "probot": "^12.3.1",
-    "serverless": "^3.33.0"
+    "probot": "^13.3.9",
+    "serverless": "^4.0.0"
   },
   "devDependencies": {
     "eslint": "^8.26.0",

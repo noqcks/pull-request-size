@@ -7,8 +7,8 @@ import { minimatch } from "minimatch";
  * @param globs A list of file globs to match the file.
  */
 function globMatch(file: string, globs: string[]): boolean {
-  for (let i = 0; i < globs.length; i += 1) {
-    if (minimatch(file, globs[i])) {
+  for (const glob of globs) {
+    if (glob && minimatch(file, glob)) {
       return true;
     }
   }

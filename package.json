@@ -29,10 +29,10 @@
     "probot": "^13.4.3",
     "smee-client": "^2.0.4",
     "supertest": "^7.0.0",
-    "h3": "^1.10.1",
-    "lru-cache": "^11.0.2"
+    "h3": "^1.10.1"
   },
   "devDependencies": {
+    "lru-cache": "^11.0.2",
     "nitropack": "latest",
     "@eslint/js": "^9.20.0",
     "@octokit/webhooks": "^13.6.1",

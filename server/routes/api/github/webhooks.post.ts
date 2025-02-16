@@ -1,7 +1,6 @@
 import type { WebhookEventName } from "@octokit/webhooks-types";
-import { eventHandler, readRawBody } from "h3";
 import { createProbot } from "probot";
-
+import { readRawBody } from "h3";
 const probot = createProbot();
 
 export default eventHandler(async (event) => {
@@ -13,6 +12,9 @@ export default eventHandler(async (event) => {
   if (!body || !signatureSHA256 || !id || !eventName) {
     return new Response("Bad request", { status: 400 });
   }
+
+  console.log("Received webhook event:", eventName);
+  console.log("body", body);
 
   probot.webhooks.verifyAndReceive({
     id,

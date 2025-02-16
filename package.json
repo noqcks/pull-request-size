@@ -1,5 +1,6 @@
 {
   "name": "size",
+  "private": true,
   "version": "2.0.0",
   "description": "Applies size labels to Pull Requests",
   "author": "Benji Visser <benji@093b.org>",
@@ -29,10 +30,10 @@
     "probot": "^13.4.3",
     "smee-client": "^2.0.4",
     "supertest": "^7.0.0",
-    "h3": "^1.10.1"
+    "lru-cache": "^11.0.2",
+    "h3": "^1.15.0"
   },
   "devDependencies": {
-    "lru-cache": "^11.0.2",
     "nitropack": "latest",
     "@eslint/js": "^9.20.0",
     "@octokit/webhooks": "^13.6.1",
@@ -47,8 +48,5 @@
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.24.0",
     "vitest": "^3.0.5"
-  },
-  "engines": {
-    "node": ">= 22.0.0"
   }
 }

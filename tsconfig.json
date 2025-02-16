@@ -1,5 +1,5 @@
 {
   "extends": "./.nitro/types/tsconfig.json",
   "exclude": ["node_modules", "dist", "lib", "nitro.config.ts", ".nitro"],
-  "include": ["src/**/*.ts", "routes/**/*.ts"]
+  "include": ["src/**/*.ts", "server/routes/**/*.ts"]
 }

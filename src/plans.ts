@@ -1,4 +1,4 @@
-import { Context, Probot } from "probot";
+import { App } from "@octokit/app";
 import context from "./context";
 
 /**
@@ -38,7 +38,7 @@ function invoicedProSubscription(login: string): boolean {
 /**
  * Checks if organization has a Pro plan by checking free list, invoiced list, and GitHub Marketplace
  */
-async function isProPlan(app: Probot["log"], ctx: Context): Promise<boolean> {
+async function isProPlan(app: App["log"], ctx: Context): Promise<boolean> {
   try {
     const id = context.getRepoOwnerId(ctx);
     const login = context.getRepoOwnerLogin(ctx);

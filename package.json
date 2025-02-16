@@ -9,9 +9,7 @@
   "homepage": "https://github.com/noqcks/pull-request-size",
   "bugs": "https://github.com/noqcks/pull-request-size/issues",
   "keywords": [
-    "probot",
     "github",
-    "probot-app"
   ],
   "packageManager": "pnpm@9.15.4",
   "scripts": {
@@ -27,11 +25,10 @@
     "@noqcks/generated": "^8.0.5",
     "@sentry/node": "^9.1.0",
     "minimatch": "^10.0.1",
-    "probot": "^13.4.3",
     "smee-client": "^2.0.4",
     "supertest": "^7.0.0",
     "lru-cache": "^11.0.2",
-    "h3": "^1.15.0"
+    "@octokit/app": "^15.1.4"
   },
   "devDependencies": {
     "nitropack": "latest",

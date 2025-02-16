@@ -1,5 +1,6 @@
 import Generated from "@noqcks/generated";
 import { Context, Probot } from "probot";
+import { App } from "@octokit/app";
 
 import context from "./context";
 import plans from "./plans";
@@ -49,7 +50,7 @@ async function addCommentIfDoesntExist(
  * Checks if repo has valid subscription, adds comment if not
  */
 async function hasValidSubscriptionForRepo(
-  app: Probot,
+  app: App,
   ctx: PullRequestContext
 ): Promise<boolean> {
   if (context.isPrivateOrgRepo(ctx)) {

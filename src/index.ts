@@ -1,4 +1,4 @@
-import { Probot } from "probot";
+import { App } from "@octokit/app";
 
 import * as MarketplacePurchase from "./webhooks/marketplace-purchase";
 import github from "./github";
@@ -7,7 +7,7 @@ import context from "./context";
 
 const MAX_FILES = 1000;
 
-function configureSentry(app: Probot) {
+function configureSentry(app: App) {
   if (process.env.SENTRY_DSN) {
     app.log.info("Setting up Sentry.io logging...");
   } else {
@@ -15,7 +15,17 @@ function configureSentry(app: Probot) {
   }
 }
 
-export default (app: Probot) => {
+const app = new App({
+  appId: process.env.APP_ID!,
+  privateKey: process.env.PRIVATE_KEY!,
+  webhooks: {
+    secret: process.env.WEBHOOK_SECRET!,
+  },
+});
+
+export type App = typeof app
+
+export default (app: App) => {
   configureSentry(app);
 
   app.on(

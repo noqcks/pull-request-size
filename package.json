@@ -30,6 +30,7 @@
     "probot": "^13.4.3",
     "supertest": "^7.0.0",
     "h3": "^1.10.1",
+    "lru-cache": "^11.0.2",
     "nitropack": "latest"
   },
   "devDependencies": {

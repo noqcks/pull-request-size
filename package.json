@@ -16,7 +16,7 @@
   "scripts": {
     "prepare": "nitropack prepare",
     "dev": "nitropack dev",
-    "build": "nitropack build",
+    "build": "NITRO_PRESET=vercel_edge nitropack build",
     "preview": "node .output/server/index.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
@@ -30,10 +30,10 @@
     "smee-client": "^2.0.4",
     "supertest": "^7.0.0",
     "h3": "^1.10.1",
-    "lru-cache": "^11.0.2",
-    "nitropack": "latest"
+    "lru-cache": "^11.0.2"
   },
   "devDependencies": {
+    "nitropack": "latest",
     "@eslint/js": "^9.20.0",
     "@octokit/webhooks": "^13.6.1",
     "@octokit/webhooks-types": "^7.6.1",

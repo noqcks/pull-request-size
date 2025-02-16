@@ -1,14 +1,16 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "target": "es2022",
-    "module": "es2022",
-    "moduleResolution": "bundler",
-    "esModuleInterop": true,
-    "strict": true,
+    "target": "ES2022",
+    "allowJs": true,
     "skipLibCheck": true,
-    "outDir": "lib",
-    "rootDir": "src"
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "Bundler",
+    "noUncheckedIndexedAccess": true
   },
-  "exclude": ["test_old/**/*", ".old/**/*"],
-  "include": ["src/**/*"]
+  "exclude": ["node_modules", "dist", "lib", "tests"],
+  "include": ["src/**/*.ts"]
 }

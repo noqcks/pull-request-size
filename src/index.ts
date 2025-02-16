@@ -1,10 +1,10 @@
 import * as Sentry from "@sentry/node";
 import { Probot, Context } from "probot";
 
-import * as MarketplacePurchase from "./webhooks/marketplace-purchase.js";
+import * as MarketplacePurchase from "./webhooks/marketplace-purchase";
 import github from "./github";
 import labels from "./labels";
-import context from "./context.js";
+import context from "./context";
 
 const MAX_FILES = 1000;
 

@@ -129,7 +129,7 @@ async function addLabel(
 function getGitattributesLinguistFiles(contentRaw: string): string[] {
   const decoded = Buffer.from(contentRaw, "base64").toString("utf8");
 
-  return decoded.split("\n").reduce((files: string[], line) => {
+  return decoded.split("\n").reduce<string[]>((files, line) => {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith("#")) {
       return files;
@@ -141,7 +141,10 @@ function getGitattributesLinguistFiles(contentRaw: string): string[] {
         attr === "linguist-generated" || attr === "linguist-generated=true"
     );
 
-    return isGenerated ? [...files, pattern] : files;
+    if (isGenerated && pattern) {
+      files.push(pattern);
+    }
+    return files;
   }, []);
 }
 

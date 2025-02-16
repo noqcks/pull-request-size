@@ -1,10 +1,15 @@
-# Node
-node_modules/
-coverage/
-
-# Secrets
+node_modules
+npm-debug.log
 *.pem
+!mock-cert.pem
 .env
-
-# Serverless
+coverage
+lib
+.env
 .serverless
+dist/
+*.log*
+.nitro
+.cache
+.output
+.env

@@ -16,7 +16,7 @@
   "scripts": {
     "prepare": "nitropack prepare",
     "dev": "nitropack dev",
-    "build": "NITRO_PRESET=vercel_edge nitropack build",
+    "build": "nitropack build",
     "preview": "node .output/server/index.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",

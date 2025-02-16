@@ -6,7 +6,7 @@ useDotenv: true
 
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: nodejs18.x
   environment:
     APP_ID: ${env:APP_ID}
     PRIVATE_KEY: ${env:PRIVATE_KEY}
@@ -21,7 +21,6 @@ functions:
     handler: src/handler.webhooks
     timeout: 25
     memorySize: 256
-    provisionedConcurrency: 1
     events:
       - httpApi:
           path: /api/github/webhooks

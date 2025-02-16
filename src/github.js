@@ -1,4 +1,9 @@
-const Generated = require('@noqcks/generated');
+let generated;
+
+(async () => {
+  generated = await import('@noqcks/generated');
+})();
+
 const context = require('./context');
 const plans = require('./plans');
 const utils = require('./utils');
@@ -146,7 +151,7 @@ async function getAdditionsAndDeletions(app, ctx, isPublicRepo) {
     if (isPublicRepo) {
       fileContent = await getFileContent(ctx, owner, repo, file.filename, commitSha);
     }
-    const g = new Generated(file.filename, fileContent);
+    const g = new generated.Generated(file.filename, fileContent);
     // if files are generated, remove them from the additions/deletions total
     if (utils.globMatch(file.filename, customGeneratedFiles) || g.isGenerated()) {
       additions -= file.additions;

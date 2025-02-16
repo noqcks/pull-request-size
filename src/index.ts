@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/node";
 import { Probot, Context } from "probot";
 
 import * as MarketplacePurchase from "./webhooks/marketplace-purchase";
@@ -11,7 +10,6 @@ const MAX_FILES = 1000;
 function configureSentry(app: Probot) {
   if (process.env.SENTRY_DSN) {
     app.log.info("Setting up Sentry.io logging...");
-    Sentry.init({ dsn: process.env.SENTRY_DSN });
   } else {
     app.log.info("Skipping Sentry.io setup");
   }
@@ -29,13 +27,6 @@ export default (app: Probot) => {
     ],
     async (ctx: Context<"marketplace_purchase">) => {
       await MarketplacePurchase.handle(app.log, ctx);
-      Sentry.captureEvent({
-        message: `Marketplace: ${ctx.payload.action} ${ctx.payload.marketplace_purchase.plan.name}`,
-        extra: {
-          org: ctx.payload.marketplace_purchase.account.login,
-        },
-        level: "info",
-      });
     }
   );
 

@@ -1,7 +1,8 @@
-let generated;
+let Generated;
 
 (async () => {
-  generated = await import('@noqcks/generated');
+  const generatedModule = await import('@noqcks/generated');
+  Generated = generatedModule.default;
 })();
 
 const context = require('./context');
@@ -145,13 +146,10 @@ async function getAdditionsAndDeletions(app, ctx, isPublicRepo) {
 
   await Promise.all(files.map(async (file) => {
     let fileContent = file.patch || '';
-    // for private repos we can only use the file name to determine if it is generated
-    // file, since we don't ask for file content read permissions in the Pull Request Size
-    // app.
     if (isPublicRepo) {
       fileContent = await getFileContent(ctx, owner, repo, file.filename, commitSha);
     }
-    const g = new generated.Generated(file.filename, fileContent);
+    const g = new Generated(file.filename, fileContent);
     // if files are generated, remove them from the additions/deletions total
     if (utils.globMatch(file.filename, customGeneratedFiles) || g.isGenerated()) {
       additions -= file.additions;

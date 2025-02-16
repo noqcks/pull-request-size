@@ -1,20 +1,5 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "compilerOptions": {
-    "target": "ES2022",
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "esModuleInterop": true,
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "forceConsistentCasingInFileNames": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitAny": true,
-    "outDir": "./dist",
-    "noEmit": false,
-    "incremental": true
-  },
-  "exclude": ["node_modules", "dist", "lib", "tests"],
+  "extends": "./.nitro/types/tsconfig.json",
+  "exclude": ["node_modules", "dist", "lib", "tests", "nitro.config.ts", ".nitro"],
   "include": ["src/**/*.ts"]
 }

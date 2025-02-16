@@ -8,3 +8,8 @@ lib
 .env
 .serverless
 dist/
+*.log*
+.nitro
+.cache
+.output
+.env

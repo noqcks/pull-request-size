@@ -1,4 +1,4 @@
-import { Probot, Context } from "probot";
+import { Probot } from "probot";
 
 import * as MarketplacePurchase from "./webhooks/marketplace-purchase";
 import github from "./github";
@@ -25,7 +25,7 @@ export default (app: Probot) => {
       "marketplace_purchase.cancelled",
       "marketplace_purchase.pending_change",
     ],
-    async (ctx: Context<"marketplace_purchase">) => {
+    async (ctx) => {
       await MarketplacePurchase.handle(app.log, ctx);
     }
   );
@@ -38,6 +38,7 @@ export default (app: Probot) => {
       "pull_request.edited",
     ],
     async (ctx) => {
+      console.log("PULL REQUEST EVENT");
       if (
         context.blockedAccount(ctx) ||
         context.changedFiles(ctx) > MAX_FILES

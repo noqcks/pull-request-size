@@ -15,10 +15,12 @@
   ],
   "packageManager": "pnpm@9.15.4",
   "scripts": {
-    "build": "tsc",
+    "prepare": "nitropack prepare",
+    "dev": "nitropack dev",
+    "build": "nitropack build",
+    "preview": "node .output/server/index.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "dev": "probot run ./lib/index.js",
     "test": "vitest"
   },
   "dependencies": {
@@ -26,7 +28,9 @@
     "@sentry/node": "^9.1.0",
     "minimatch": "^10.0.1",
     "probot": "^13.4.3",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "h3": "^1.10.1",
+    "nitropack": "latest"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",

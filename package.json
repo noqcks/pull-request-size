@@ -1,6 +1,5 @@
 {
   "name": "size",
-  "type": "module",
   "version": "2.0.0",
   "description": "Applies size labels to Pull Requests",
   "author": "Benji Visser <benji@093b.org>",

@@ -8,3 +8,4 @@ lib
 .env
 .serverless
 .old
+public/

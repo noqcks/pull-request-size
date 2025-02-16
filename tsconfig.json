@@ -5,11 +5,12 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "Bundler",
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "outDir": "public",
+    "noEmit": false
   },
   "exclude": ["node_modules", "dist", "lib", "tests"],
   "include": ["src/**/*.ts"]

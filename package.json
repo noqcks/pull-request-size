@@ -15,7 +15,8 @@
   ],
   "packageManager": "pnpm@9.15.4",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --outDir public",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "dev": "probot run ./lib/index.js",
     "test": "vitest"

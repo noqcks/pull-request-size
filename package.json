@@ -24,7 +24,7 @@
     "@sentry/node": "^7.120.0",
     "minimatch": "^5.1.6",
     "probot": "^12.3.1",
-    "serverless": "^3.33.0"
+    "serverless": "^4.0.0"
   },
   "devDependencies": {
     "@jest/globals": "^28.1.2",
